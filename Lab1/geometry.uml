@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>JAVA</ID>
+  <OriginalElement>sample.geometry</OriginalElement>
+  <nodes>
+    <node x="171.5" y="448.0">sample.geometry.Square</node>
+    <node x="539.6527777777778" y="223.0">sample.geometry.OpenShape</node>
+    <node x="525.5" y="437.0">sample.geometry.Ray</node>
+    <node x="600.0" y="324.5">sample.geometry.Polyline</node>
+    <node x="0.0" y="324.5">sample.geometry.Ellipse</node>
+    <node x="298.0" y="313.0">sample.geometry.RegularPolygon</node>
+    <node x="376.5" y="437.0">sample.geometry.Segment</node>
+    <node x="142.5" y="212.0">sample.geometry.ClosedShape</node>
+    <node x="451.0" y="324.5">sample.geometry.Line</node>
+    <node x="317.05555555555554" y="0.0">sample.geometry.Shape</node>
+    <node x="26.0" y="448.0">sample.geometry.Circle</node>
+    <node x="149.0" y="324.5">sample.geometry.Rectangle</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="sample.geometry.Line" target="sample.geometry.OpenShape">
+      <point x="0.0" y="-25.5" />
+      <point x="515.5" y="288.0" />
+      <point x="566.9027777777778" y="288.0" />
+      <point x="-27.25" y="14.5" />
+    </edge>
+    <edge source="sample.geometry.Circle" target="sample.geometry.Ellipse">
+      <point x="0.0" y="-14.5" />
+      <point x="0.0" y="25.5" />
+    </edge>
+    <edge source="sample.geometry.Segment" target="sample.geometry.Line">
+      <point x="0.0" y="-25.5" />
+      <point x="441.0" y="412.0" />
+      <point x="483.25" y="412.0" />
+      <point x="-32.25" y="25.5" />
+    </edge>
+    <edge source="sample.geometry.Square" target="sample.geometry.Rectangle">
+      <point x="0.0" y="-14.5" />
+      <point x="0.0" y="25.5" />
+    </edge>
+    <edge source="sample.geometry.Polyline" target="sample.geometry.OpenShape">
+      <point x="0.0" y="-25.5" />
+      <point x="664.5" y="288.0" />
+      <point x="621.4027777777778" y="288.0" />
+      <point x="27.25" y="14.5" />
+    </edge>
+    <edge source="sample.geometry.Ellipse" target="sample.geometry.ClosedShape">
+      <point x="0.0" y="-25.5" />
+      <point x="64.5" y="288.0" />
+      <point x="166.16666666666663" y="288.0" />
+      <point x="-47.33333333333337" y="25.5" />
+    </edge>
+    <edge source="sample.geometry.Rectangle" target="sample.geometry.ClosedShape">
+      <point x="0.0" y="-25.5" />
+      <point x="0.0" y="25.5" />
+    </edge>
+    <edge source="sample.geometry.RegularPolygon" target="sample.geometry.ClosedShape">
+      <point x="0.0" y="-37.0" />
+      <point x="364.5" y="288.0" />
+      <point x="260.83333333333337" y="288.0" />
+      <point x="47.33333333333337" y="25.5" />
+    </edge>
+    <edge source="sample.geometry.Ray" target="sample.geometry.Line">
+      <point x="0.0" y="-25.5" />
+      <point x="590.0" y="412.0" />
+      <point x="547.75" y="412.0" />
+      <point x="32.25" y="25.5" />
+    </edge>
+    <edge source="sample.geometry.ClosedShape" target="sample.geometry.Shape">
+      <point x="0.0" y="-25.5" />
+      <point x="213.5" y="187.0" />
+      <point x="369.05555555555554" y="187.0" />
+      <point x="-52.0" y="81.0" />
+    </edge>
+    <edge source="sample.geometry.OpenShape" target="sample.geometry.Shape">
+      <point x="0.0" y="-14.5" />
+      <point x="594.1527777777778" y="187.0" />
+      <point x="473.05555555555554" y="187.0" />
+      <point x="52.0" y="81.0" />
+    </edge>
+  </edges>
+  <settings layout="Hierarchic Group" zoom="1.0" x="364.5" y="244.0" />
+  <SelectedNodes />
+  <Categories>
+    <Category>Fields</Category>
+    <Category>Constructors</Category>
+    <Category>Methods</Category>
+    <Category>Properties</Category>
+    <Category>Inner Classes</Category>
+  </Categories>
+  <SCOPE>All</SCOPE>
+  <VISIBILITY>private</VISIBILITY>
+</Diagram>
+
