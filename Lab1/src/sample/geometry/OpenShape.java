@@ -1,27 +1,32 @@
 package sample.geometry;
 
-/**
- * @author User
- * @version 1.0
- * @created 03-Mar-2019 3:07:23 PM
- */
+import javafx.scene.paint.Color;
+
+
 public abstract class OpenShape extends Shape {
 
 	private int lineStyle;
 
 	public OpenShape(){
+		super();
+		this.lineStyle = 0;
+	}
 
+	public OpenShape(Color strokeColor) {
+		super(strokeColor);
+		this.lineStyle = 0;
+	}
+
+	public OpenShape(Color strokeColor, int lineStyle) {
+		super(strokeColor);
+		this.lineStyle = lineStyle;
 	}
 
 	public int getLineStyle(){
-		return 0;
+		return lineStyle;
 	}
 
-	/**
-	 * 
-	 * @param lineStyle
-	 */
 	public void setLineStyle(int lineStyle){
-
+		this.lineStyle = lineStyle;
 	}
-}//end OpenShape
+}

@@ -1,14 +1,24 @@
 package sample.geometry;
 
-/**
- * @author User
- * @version 1.0
- * @created 03-Mar-2019 3:07:23 PM
- */
+import javafx.geometry.Point2D;
+import javafx.scene.paint.Color;
+
+
 public class Ray extends Segment {
 
 	public Ray(){
-
+		super();
 	}
 
-}//end Ray
+	public Ray(Point2D startPoint, Point2D endPoint) {
+		super(startPoint, endPoint);
+	}
+
+	public Ray(Point2D startPoint, Point2D endPoint, Color strokeColor) {
+		super(startPoint, endPoint, strokeColor);
+	}
+
+	public Ray(Point2D startPoint, Point2D endPoint, Color strokeColor, int lineStyle) {
+		super(startPoint, endPoint, strokeColor, lineStyle);
+	}
+}

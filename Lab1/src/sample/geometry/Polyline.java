@@ -12,7 +12,6 @@ import java.util.ArrayList;
 public class Polyline extends OpenShape {
 
 	private ArrayList<Segment> segments;
-	public Segment m_Segment;
 
 	public Polyline(){
 

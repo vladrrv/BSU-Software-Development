@@ -2,46 +2,55 @@ package sample.geometry;
 
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.paint.Color;
 
-/**
- * @author User
- * @version 1.0
- * @created 03-Mar-2019 3:07:24 PM
- */
+
 public class Segment extends OpenShape {
 
-	private Point2D endPoint;
 	private Point2D startPoint;
+	private Point2D endPoint;
 
 	public Segment(){
-
+		this.endPoint = new Point2D(0,0);
+		this.startPoint = new Point2D(0,0);
 	}
 
-	public void draw(GraphicsContext gc){
-
+	public Segment(Point2D startPoint, Point2D endPoint) {
+		super();
+		this.startPoint = startPoint;
+		this.endPoint = endPoint;
 	}
 
-	public Point2D getEndPoint(){
-		return null;
+	public Segment(Point2D startPoint, Point2D endPoint, Color strokeColor) {
+		super(strokeColor);
+		this.startPoint = startPoint;
+		this.endPoint = endPoint;
+	}
+
+	public Segment(Point2D startPoint, Point2D endPoint, Color strokeColor, int lineStyle) {
+		super(strokeColor, lineStyle);
+		this.startPoint = startPoint;
+		this.endPoint = endPoint;
+	}
+
+	public void draw(GraphicsContext gc) {
+		gc.setStroke(this.getStrokeColor());
+		gc.setLineWidth(1);
+		gc.strokeLine(startPoint.getX(), startPoint.getY(), endPoint.getX(), endPoint.getY());
 	}
 
 	public Point2D getStartPoint(){
-		return null;
+		return startPoint;
+	}
+	public Point2D getEndPoint(){
+		return endPoint;
 	}
 
-	/**
-	 * 
-	 * @param endPoint
-	 */
-	public void setEndPoint(Point2D endPoint){
-
+	public void setStartPoint(Point2D startPoint) {
+		this.startPoint = startPoint;
+	}
+	public void setEndPoint(Point2D endPoint) {
+		this.endPoint = endPoint;
 	}
 
-	/**
-	 * 
-	 * @param startPoint
-	 */
-	public void setStartPoint(Point2D startPoint){
-
-	}
-}//end Segment
+}

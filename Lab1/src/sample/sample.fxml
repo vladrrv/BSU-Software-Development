@@ -1,21 +1,57 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import java.lang.*?>
-<?import javafx.scene.canvas.*?>
 <?import javafx.scene.control.*?>
+<?import javafx.scene.canvas.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.canvas.Canvas?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ToolBar?>
-<?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane minHeight="600.0" minWidth="800.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
-   <children>
-      <ToolBar prefHeight="40.0" prefWidth="200.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+<BorderPane minHeight="600.0" minWidth="800.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
+    <center>
+        <Canvas fx:id="canvas" height="520.0" onMouseClicked="#addPoint" onMouseMoved="#showCursorCoord" style="-fx-cursor: crosshair;" width="600.0" BorderPane.alignment="CENTER" />
+    </center>
+   <top>
+      <MenuBar BorderPane.alignment="CENTER">
+        <menus>
+          <Menu mnemonicParsing="false" text="File">
+            <items>
+              <MenuItem mnemonicParsing="false" text="Close" />
+            </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="Edit">
+            <items>
+              <MenuItem mnemonicParsing="false" text="Delete" />
+            </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="Help">
+            <items>
+              <MenuItem mnemonicParsing="false" text="About" />
+            </items>
+          </Menu>
+        </menus>
+      </MenuBar>
+   </top>
+   <bottom>
+      <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
         <items>
-          <Button mnemonicParsing="false" text="Button" />
+            <ColorPicker fx:id="borderColorPicker" promptText="Border Color" />
+            <ColorPicker fx:id="fillColorPicker" promptText="Fill Color" />
+            <ComboBox prefWidth="150.0" promptText="Line Style" />
+            <Label fx:id="coordLabel" text="Coordinates" />
         </items>
       </ToolBar>
-      <Canvas fx:id="canvas" height="155.0" layoutY="45.0" width="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-   </children>
-</AnchorPane>
+   </bottom>
+   <left>
+      <AnchorPane prefHeight="500.0" prefWidth="200.0" style="-fx-background-color: #eee;" BorderPane.alignment="CENTER">
+         <children>
+            <Button layoutX="14.0" layoutY="14.0" mnemonicParsing="false" text="Clear" />
+            <RadioButton fx:id="segmentRb" layoutX="14.0" layoutY="77.0" mnemonicParsing="false" onAction="#selectShape" text="Segment">
+               <toggleGroup>
+                  <ToggleGroup fx:id="shape" />
+               </toggleGroup>
+            </RadioButton>
+            <RadioButton fx:id="rayRb" layoutX="14.0" layoutY="108.0" mnemonicParsing="false" onAction="#selectShape" text="Ray" toggleGroup="$shape" />
+            <RadioButton fx:id="lineRb" layoutX="14.0" layoutY="139.0" mnemonicParsing="false" onAction="#selectShape" text="Line" toggleGroup="$shape" />
+         </children>
+      </AnchorPane>
+   </left>
+</BorderPane>

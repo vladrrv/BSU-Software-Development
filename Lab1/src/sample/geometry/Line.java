@@ -1,14 +1,30 @@
 package sample.geometry;
 
-/**
- * @author User
- * @version 1.0
- * @created 03-Mar-2019 3:07:23 PM
- */
+import javafx.geometry.Point2D;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.paint.Color;
+
+
 public class Line extends Segment {
 
-	public Line(){
-
+	public Line() {
+		super();
 	}
 
-}//end Line
+	public Line(Point2D startPoint, Point2D endPoint) {
+		super(startPoint, endPoint);
+	}
+
+	public Line(Point2D startPoint, Point2D endPoint, Color strokeColor) {
+		super(startPoint, endPoint, strokeColor);
+	}
+
+	public Line(Point2D startPoint, Point2D endPoint, Color strokeColor, int lineStyle) {
+		super(startPoint, endPoint, strokeColor, lineStyle);
+	}
+
+	@Override
+	public void draw(GraphicsContext gc) {
+		super.draw(gc);
+	}
+}
