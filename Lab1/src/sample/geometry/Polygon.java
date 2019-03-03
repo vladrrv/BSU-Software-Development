@@ -7,13 +7,13 @@ import javafx.scene.canvas.GraphicsContext;
  * @version 1.0
  * @created 03-Mar-2019 3:07:23 PM
  */
-public class Ellipse extends ClosedShape {
+public class Polygon extends ClosedShape {
 
-	public Ellipse(){
+	public Polygon(){
 
 	}
 
 	public void draw(GraphicsContext gc){
 
 	}
-}//end Ellipse
+}//end Polygon

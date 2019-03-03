@@ -14,9 +14,11 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws IOException {
         Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
         Scene scene = new Scene(root);
-        primaryStage.setTitle("Hello World");
+        primaryStage.setTitle("Draw Shapes!");
         primaryStage.setScene(scene);
         primaryStage.show();
+        primaryStage.setMinHeight(primaryStage.getHeight());
+        primaryStage.setMinWidth(primaryStage.getWidth());
     }
 
 

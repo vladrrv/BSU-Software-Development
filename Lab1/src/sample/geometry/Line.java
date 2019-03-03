@@ -1,9 +1,14 @@
 package sample.geometry;
 
-public class Line extends OpenShape {
+/**
+ * @author User
+ * @version 1.0
+ * @created 03-Mar-2019 3:07:23 PM
+ */
+public class Line extends Segment {
 
-    @Override
-    public void draw() {
+	public Line(){
 
-    }
-}
+	}
+
+}//end Line
