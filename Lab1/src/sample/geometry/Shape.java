@@ -8,6 +8,7 @@ import javafx.scene.paint.Color;
 public abstract class Shape {
 
 	private Color strokeColor;
+	private double lineWidth;
 	private Point2D theCenter;
 
 	public Shape() {
@@ -17,7 +18,13 @@ public abstract class Shape {
 
 	public Shape(Color strokeColor) {
 		this.strokeColor = strokeColor;
+		this.lineWidth = 1;
 		this.theCenter = new Point2D(0,0);
+	}
+
+	public Shape(Color strokeColor, double lineWidth) {
+		this.strokeColor = strokeColor;
+		this.lineWidth = lineWidth;
 	}
 
 	public abstract void draw(GraphicsContext gc);
@@ -44,5 +51,9 @@ public abstract class Shape {
 
 	public void setStrokeColor(Color color){
 		this.strokeColor = color;
+	}
+
+	public double getLineWidth() {
+		return lineWidth;
 	}
 }

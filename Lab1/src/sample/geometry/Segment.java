@@ -2,6 +2,7 @@ package sample.geometry;
 
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.effect.Effect;
 import javafx.scene.paint.Color;
 
 
@@ -33,9 +34,16 @@ public class Segment extends OpenShape {
 		this.endPoint = endPoint;
 	}
 
+	public Segment(Point2D startPoint, Point2D endPoint, Color strokeColor, double lineWidth, int lineStyle) {
+		super(strokeColor, lineWidth, lineStyle);
+		this.startPoint = startPoint;
+		this.endPoint = endPoint;
+	}
+
 	public void draw(GraphicsContext gc) {
 		gc.setStroke(this.getStrokeColor());
-		gc.setLineWidth(1);
+		gc.setLineWidth(this.getLineWidth());
+		gc.setLineDashes(this.getLineDashes());
 		gc.strokeLine(startPoint.getX(), startPoint.getY(), endPoint.getX(), endPoint.getY());
 	}
 

@@ -1,14 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.*?>
 <?import java.lang.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.canvas.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane minHeight="600.0" minWidth="800.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
-    <center>
-        <Canvas fx:id="canvas" height="520.0" onMouseClicked="#addPoint" onMouseMoved="#showCursorCoord" style="-fx-cursor: crosshair;" width="600.0" BorderPane.alignment="CENTER" />
-    </center>
+<BorderPane minHeight="600.0" minWidth="800.0" style="-fx-background-color: gray;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
    <top>
       <MenuBar BorderPane.alignment="CENTER">
         <menus>
@@ -33,9 +31,32 @@
    <bottom>
       <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
         <items>
-            <ColorPicker fx:id="borderColorPicker" promptText="Border Color" />
-            <ColorPicker fx:id="fillColorPicker" promptText="Fill Color" />
-            <ComboBox prefWidth="150.0" promptText="Line Style" />
+            <ColorPicker fx:id="strokePicker" promptText="Border Color">
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+               <tooltip>
+                  <Tooltip text="Stroke" />
+               </tooltip></ColorPicker>
+            <ColorPicker fx:id="fillPicker" promptText="Fill Color">
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+               <tooltip>
+                  <Tooltip text="Fill" />
+               </tooltip></ColorPicker>
+            <TextField fx:id="lineWidthTf" alignment="CENTER_RIGHT" prefHeight="31.0" prefWidth="34.0" promptText="px" text="1">
+               <tooltip>
+                  <Tooltip text="Line Thickness (px)" />
+               </tooltip>
+            </TextField>
+            <ComboBox fx:id="lineStyleCb" prefWidth="150.0" promptText="Line Style">
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+               <tooltip>
+                  <Tooltip text="Line Style" />
+               </tooltip></ComboBox>
             <Label fx:id="coordLabel" text="Coordinates" />
         </items>
       </ToolBar>
@@ -48,10 +69,30 @@
                <toggleGroup>
                   <ToggleGroup fx:id="shape" />
                </toggleGroup>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
             </RadioButton>
-            <RadioButton fx:id="rayRb" layoutX="14.0" layoutY="108.0" mnemonicParsing="false" onAction="#selectShape" text="Ray" toggleGroup="$shape" />
-            <RadioButton fx:id="lineRb" layoutX="14.0" layoutY="139.0" mnemonicParsing="false" onAction="#selectShape" text="Line" toggleGroup="$shape" />
+            <RadioButton fx:id="rayRb" layoutX="14.0" layoutY="108.0" mnemonicParsing="false" onAction="#selectShape" text="Ray" toggleGroup="$shape">
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor></RadioButton>
+            <RadioButton fx:id="lineRb" layoutX="14.0" layoutY="139.0" mnemonicParsing="false" onAction="#selectShape" text="Line" toggleGroup="$shape">
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor></RadioButton>
          </children>
       </AnchorPane>
    </left>
+   <center>
+      <AnchorPane BorderPane.alignment="CENTER">
+         <children>
+            <Canvas fx:id="canvas" height="523.0" onMouseClicked="#addPoint" onMouseMoved="#showCursorCoord" width="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+               <cursor>
+                  <Cursor fx:constant="CROSSHAIR" />
+               </cursor>
+            </Canvas>
+         </children>
+      </AnchorPane>
+   </center>
 </BorderPane>
