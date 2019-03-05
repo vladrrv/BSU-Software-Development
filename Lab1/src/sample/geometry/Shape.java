@@ -9,17 +9,17 @@ public abstract class Shape {
 
 	private Color strokeColor;
 	private double lineWidth;
-	private Point2D theCenter;
+	private Point2D center;
 
 	public Shape() {
 		this.strokeColor = new Color(0,0,0, 1);
-		this.theCenter = new Point2D(0,0);
+		this.center = new Point2D(0,0);
 	}
 
 	public Shape(Color strokeColor) {
 		this.strokeColor = strokeColor;
 		this.lineWidth = 1;
-		this.theCenter = new Point2D(0,0);
+		this.center = new Point2D(0,0);
 	}
 
 	public Shape(Color strokeColor, double lineWidth) {
@@ -30,7 +30,7 @@ public abstract class Shape {
 	public abstract void draw(GraphicsContext gc);
 
 	public Point2D getCenter(){
-		return theCenter;
+		return center;
 	}
 
 	public Color getStrokeColor(){
@@ -46,7 +46,7 @@ public abstract class Shape {
 	}
 
 	public void setCenter(Point2D center){
-		this.theCenter = center;
+		this.center = center;
 	}
 
 	public void setStrokeColor(Color color){

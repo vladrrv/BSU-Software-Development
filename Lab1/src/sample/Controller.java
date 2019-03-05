@@ -2,6 +2,8 @@ package sample;
 
 import javafx.beans.value.ChangeListener;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 import sample.geometry.Line;
 import sample.geometry.Ray;
@@ -28,6 +30,7 @@ public class Controller {
     @FXML private ColorPicker strokePicker;
     @FXML private ColorPicker fillPicker;
     @FXML private Label coordLabel;
+    @FXML private Button clearButton;
     @FXML private RadioButton segmentRb;
     @FXML private RadioButton rayRb;
     @FXML private RadioButton lineRb;
@@ -38,33 +41,48 @@ public class Controller {
     private boolean isDrawing;
     private ArrayList<Point2D> pool;
     private ShapeType currentShape;
-    private int currentLineStyle;
-    private int currentLineWidth;
     private int currentLimit;
     private final String strSolid = "Solid", strDashed = "Dashed", strDotted = "Dotted";
 
     private ArrayList<Shape> shapes;
 
-    @FXML private void initialize() {
+    private void setInitialControls() {
         coordLabel.setText("");
-        strokePicker.setTooltip(new Tooltip("Stroke"));
-        fillPicker.setTooltip(new Tooltip("Fill"));
         strokePicker.setValue(Color.BLACK);
         lineStyleCb.getItems().addAll(strSolid, strDashed, strDotted);
         lineStyleCb.setValue(strSolid);
 
-        pool = new ArrayList<>();
-        isDrawing = false;
-        currentLimit = -1;
-        shapes = new ArrayList<>();
+        RadioButton[] rbs = new RadioButton[]{segmentRb, rayRb, lineRb};
+        String[] names = new String[]{"segment", "ray", "line"};
+        for (int i = 0; i < names.length; ++i) {
+            RadioButton rb = rbs[i];
+            String name = names[i];
+            rb.getStyleClass().remove("radio-button");
+            rb.getStyleClass().add("toggle-button");
+            ImageView iv = new ImageView(new Image("file:res/icon_"+name+".png"));
+            iv.setPreserveRatio(true);
+            iv.setFitHeight(32);
+            rb.setGraphic(iv);
+        }
 
         gc = canvas.getGraphicsContext2D();
         gc.setFill(Color.WHITE);
         gc.fillRect(0,0, canvas.getWidth(), canvas.getHeight());
-        //Stage stage = (Stage)canvas.getScene().getWindow();
+
         ChangeListener<Number> canvasSizeListener = (observable, oldValue, newValue) -> drawShapes();
         canvas.widthProperty().addListener(canvasSizeListener);
         canvas.heightProperty().addListener(canvasSizeListener);
+    }
+    private void setVariables() {
+        pool = new ArrayList<>();
+        isDrawing = false;
+        currentLimit = -1;
+        shapes = new ArrayList<>();
+    }
+
+    @FXML private void initialize() {
+        setInitialControls();
+        setVariables();
     }
 
     @FXML private void showCursorCoord(MouseEvent event) {
@@ -73,6 +91,8 @@ public class Controller {
     }
 
     @FXML private void selectShape(ActionEvent event) {
+        pool.clear();
+        drawShapes();
         if (event.getSource() == segmentRb) {
             System.out.println("segment");
             currentShape = ShapeType.SEGMENT;
@@ -91,10 +111,13 @@ public class Controller {
     }
 
     @FXML private void addPoint(MouseEvent event) {
-        pool.add(new Point2D(event.getX(), event.getY()));
+        Point2D newPoint = new Point2D(event.getX(), event.getY());
+        pool.add(newPoint);
+        drawPoint(newPoint);
         if (pool.size() == currentLimit) {
             newShape();
             pool.clear();
+            drawShapes();
         }
     }
 
@@ -116,6 +139,7 @@ public class Controller {
     private void newShape() {
         Shape shape;
         Color stroke = strokePicker.getValue();
+        Color fill = fillPicker.getValue();
         double lineWidth = Double.valueOf(lineWidthTf.getText());
         int lineStyle = selectStyle();
 
@@ -136,7 +160,12 @@ public class Controller {
                 break;
             }
         }
-        drawShapes();
+    }
+
+    private void drawPoint(Point2D p) {
+        gc.setFill(Color.DARKGRAY);
+        double s = 4, t = s/2;
+        gc.fillOval(p.getX()-t, p.getY()-t, s, s);
     }
 
     private void drawShapes() {
@@ -145,5 +174,10 @@ public class Controller {
         for (Shape shape : shapes) {
             shape.draw(gc);
         }
+    }
+
+    @FXML private void clear() {
+        shapes.clear();
+        drawShapes();
     }
 }
