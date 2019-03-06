@@ -21,7 +21,6 @@ public class Main extends Application {
         primaryStage.setMinWidth(primaryStage.getWidth());
     }
 
-
     public static void main(String[] args) {
         launch(args);
     }
