@@ -1,29 +1,29 @@
-package sample.geometry;
+package sample;
 
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
 
-public class Line extends Segment {
+public class Ray extends Segment {
 
-	public Line() {
+	public Ray(){
 		super();
 	}
 
-	public Line(Point2D startPoint, Point2D endPoint) {
+	public Ray(Point2D startPoint, Point2D endPoint) {
 		super(startPoint, endPoint);
 	}
 
-	public Line(Point2D startPoint, Point2D endPoint, Color strokeColor) {
+	public Ray(Point2D startPoint, Point2D endPoint, Color strokeColor) {
 		super(startPoint, endPoint, strokeColor);
 	}
 
-	public Line(Point2D startPoint, Point2D endPoint, Color strokeColor, int lineStyle) {
+	public Ray(Point2D startPoint, Point2D endPoint, Color strokeColor, int lineStyle) {
 		super(startPoint, endPoint, strokeColor, lineStyle);
 	}
 
-	public Line(Point2D startPoint, Point2D endPoint, Color strokeColor, double lineWidth, int lineStyle) {
+	public Ray(Point2D startPoint, Point2D endPoint, Color strokeColor, double lineWidth, int lineStyle) {
 		super(startPoint, endPoint, strokeColor, lineWidth, lineStyle);
 	}
 
@@ -60,12 +60,13 @@ public class Line extends Segment {
 			newEnd = new Point2D(x2, y2);
 		}
 
-		this.setStartPoint(newStart);
-		this.setEndPoint(newEnd);
+		if (newEnd.distance(oldEnd) <= newEnd.distance(oldStart))
+			this.setEndPoint(newEnd);
+		else
+			this.setEndPoint(newStart);
 
 		super.draw(gc);
 
-		this.setStartPoint(oldStart);
 		this.setEndPoint(oldEnd);
 	}
 }

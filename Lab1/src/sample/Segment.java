@@ -1,8 +1,7 @@
-package sample.geometry;
+package sample;
 
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.effect.Effect;
 import javafx.scene.paint.Color;
 
 

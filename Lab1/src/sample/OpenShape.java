@@ -1,4 +1,4 @@
-package sample.geometry;
+package sample;
 
 import javafx.scene.paint.Color;
 

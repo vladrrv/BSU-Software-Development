@@ -1,4 +1,4 @@
-package sample.geometry;
+package sample;
 
 /**
  * @author User
