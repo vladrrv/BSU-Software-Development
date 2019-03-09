@@ -34,27 +34,38 @@ public class Controller {
     @FXML private ComboBox<String> lineStyleCb;
 
     enum ShapeType {
-        SEGMENT(0), RAY(1), LINE(2);
+        SEGMENT(0), RAY(1), LINE(2), ELLIPSE(3);
         String fullName;
+        int nPoints;
         ShapeType(int v) {
             switch (v) {
                 case 0: {
                     fullName = "Segment";
+                    nPoints = Segment.getnPoints();
                     break;
                 }
                 case 1: {
                     fullName = "Ray";
+                    nPoints = Ray.getnPoints();
                     break;
                 }
                 case 2: {
                     fullName = "Line";
+                    nPoints = Line.getnPoints();
                     break;
+                }
+                case 3: {
+                    fullName = "Ellipse";
+                    nPoints = Ellipse.getnPoints();
                 }
             }
         }
 
         public String getFullName() {
             return fullName;
+        }
+        public int getnPoints() {
+            return nPoints;
         }
     }
 
@@ -95,7 +106,7 @@ public class Controller {
                 pool.clear();
                 drawShapes();
                 currentShape = v;
-                currentLimit = 2;
+                currentLimit = v.getnPoints();
             });
             shapeSelectionPane.add(rb, i % c, i++ / c);
             GridPane.setHalignment(rb, HPos.CENTER);
@@ -213,7 +224,7 @@ public class Controller {
     }
 
     private void newShape() {
-        Shape shape;
+        Shape shape = null;
         Color stroke = strokePicker.getValue();
         Color fill = fillPicker.getValue();
         double lineWidth = Double.valueOf(lineWidthTf.getText());
@@ -222,20 +233,22 @@ public class Controller {
         switch (currentShape) {
             case SEGMENT: {
                 shape = new Segment(pool.get(0), pool.get(1), stroke, lineWidth, lineStyle);
-                shapes.add(shape);
                 break;
             }
             case RAY: {
                 shape = new Ray(pool.get(0), pool.get(1), stroke, lineWidth, lineStyle);
-                shapes.add(shape);
                 break;
             }
             case LINE: {
                 shape = new Line(pool.get(0), pool.get(1), stroke, lineWidth, lineStyle);
-                shapes.add(shape);
+                break;
+            }
+            case ELLIPSE: {
+                shape = new Ellipse(pool, stroke, fill, lineWidth);
                 break;
             }
         }
+        shapes.add(shape);
     }
 
     private void drawPoint(Point2D p) {

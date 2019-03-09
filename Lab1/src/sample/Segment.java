@@ -7,6 +7,10 @@ import javafx.scene.paint.Color;
 
 public class Segment extends OpenShape {
 
+	public static int getnPoints() {
+		return 2;
+	}
+
 	private Point2D startPoint;
 	private Point2D endPoint;
 

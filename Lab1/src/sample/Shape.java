@@ -12,7 +12,7 @@ public abstract class Shape {
 	private Point2D center;
 
 	public Shape() {
-		this.strokeColor = new Color(0,0,0, 1);
+		this.strokeColor = Color.BLACK;
 		this.center = new Point2D(0,0);
 	}
 
@@ -56,4 +56,5 @@ public abstract class Shape {
 	public double getLineWidth() {
 		return lineWidth;
 	}
+
 }

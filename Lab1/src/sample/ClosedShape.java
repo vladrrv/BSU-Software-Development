@@ -5,40 +5,37 @@ import javafx.scene.paint.Color;
 
 import java.util.ArrayList;
 
-/**
- * @version 1.0
- * @created 03-Mar-2019 3:07:23 PM
- */
 public abstract class ClosedShape extends Shape {
 
 	private Color fillColor;
 	private ArrayList<Point2D> points;
 
-	public ClosedShape(){
-
+	public ClosedShape() {
+		super();
+		this.fillColor = Color.WHITE;
+		this.points = new ArrayList<>();
 	}
 
-	public Color getColor(){
-		return null;
+	public ClosedShape(ArrayList<Point2D> points, Color strokeColor, Color fillColor, double lineWidth) {
+		super(strokeColor, lineWidth);
+		this.fillColor = fillColor;
+		this.points = new ArrayList<>();
+		this.points.addAll(points);
 	}
 
-	public ArrayList<Point2D> getPoints(){
-		return null;
+	public Color getFillColor() {
+		return fillColor;
 	}
 
-	/**
-	 * 
-	 * @param color
-	 */
-	public void setColor(Color color){
-
+	public void setFillColor(Color fillColor) {
+		this.fillColor = fillColor;
 	}
 
-	/**
-	 * 
-	 * @param points
-	 */
-	public void setPoints(ArrayList<Point2D> points){
-
+	public ArrayList<Point2D> getPoints() {
+		return points;
 	}
-}//end ClosedShape
+
+	public void setPoints(ArrayList<Point2D> points) {
+		this.points = points;
+	}
+}

@@ -1,19 +1,32 @@
 package sample;
 
+import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.paint.Color;
 
-/**
- * @author User
- * @version 1.0
- * @created 03-Mar-2019 3:07:23 PM
- */
+import java.util.ArrayList;
+
 public class Ellipse extends ClosedShape {
 
-	public Ellipse(){
-
+	public static int getnPoints() {
+		return 2;
 	}
 
-	public void draw(GraphicsContext gc){
-
+	public Ellipse(ArrayList<Point2D> points, Color strokeColor, Color fillColor, double lineWidth) {
+		super(points, strokeColor, fillColor, lineWidth);
 	}
-}//end Ellipse
+
+	public void draw(GraphicsContext gc) {
+		Point2D p1 = getPoints().get(0), p2 = getPoints().get(1);
+		double
+				x = Double.min(p1.getX(), p2.getX()),
+				y = Double.min(p1.getY(), p2.getY()),
+				dx = p1.getX() - p2.getX(), w = Double.max(dx, -dx),
+				dy = p1.getY() - p2.getY(), h = Double.max(dy, -dy);
+		gc.setFill(getFillColor());
+		gc.setStroke(getStrokeColor());
+		gc.setLineWidth(getLineWidth());
+		gc.fillOval(x, y, w, h);
+		gc.strokeOval(x, y, w, h);
+	}
+}

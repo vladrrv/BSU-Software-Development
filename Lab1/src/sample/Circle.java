@@ -1,14 +1,14 @@
 package sample;
 
-/**
- * @author User
- * @version 1.0
- * @created 03-Mar-2019 3:07:23 PM
- */
+
+import javafx.geometry.Point2D;
+import javafx.scene.paint.Color;
+
+import java.util.ArrayList;
+
 public class Circle extends Ellipse {
 
-	public Circle(){
-
+	public Circle(ArrayList<Point2D> points, Color strokeColor, Color fillColor, double lineWidth) {
+		super(points, strokeColor, fillColor, lineWidth);
 	}
-
-}//end Circle
+}
