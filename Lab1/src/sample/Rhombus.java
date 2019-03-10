@@ -28,7 +28,7 @@ public class Rhombus extends Parallelogram {
 			double k1 = (p1.getY() - p2.getY())/(p1.getX() - p2.getX()), b1 = p1.getY() - k1*p1.getX();
 			//line between vertex and center: y = k2x+b2
 			double k2 = (p1.getY() - center.getY())/(p1.getX() - center.getX()), b2 = p1.getY() - k2*p1.getX();
-			//normal to line between vertex and center in center: y - y1 = -1/k2(x-x1) y = -1/k2*x+y1+1/k2*x1 = k3x+b3;
+			//normal to line between vertex and center at center: y - y1 = -1/k2(x-x1) y = -1/k2*x+y1+1/k2*x1 = k3x+b3;
 			double k3 = -(double)1/k2, b3 = center.getY() + (double)1/k2*center.getX();
 			//intersection point
 			double x = (b3-b1)/(k1-k3), y = k1*x+b1;
