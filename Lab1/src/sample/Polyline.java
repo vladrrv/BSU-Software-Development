@@ -4,32 +4,25 @@ import javafx.scene.canvas.GraphicsContext;
 
 import java.util.ArrayList;
 
-/**
- * @author User
- * @version 1.0
- * @created 03-Mar-2019 3:07:23 PM
- */
 public class Polyline extends OpenShape {
 
 	private ArrayList<Segment> segments;
 
-	public Polyline(){
+	public Polyline() {
 
 	}
 
-	public void draw(GraphicsContext gc){
-
+	public void draw(GraphicsContext gc) {
+		for (Segment segment : segments) {
+			segment.draw(gc);
+		}
 	}
 
-	public ArrayList<Segment> getSegments(){
-		return null;
+	public ArrayList<Segment> getSegments() {
+		return segments;
 	}
 
-	/**
-	 * 
-	 * @param segments
-	 */
-	public void setSegments(ArrayList<Segment> segments){
-
+	public void setSegments(ArrayList<Segment> segments) {
+		this.segments = segments;
 	}
-}//end Polyline
+}

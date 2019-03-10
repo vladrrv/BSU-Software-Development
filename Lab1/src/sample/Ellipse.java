@@ -22,11 +22,12 @@ public class Ellipse extends ClosedShape {
 				x = Double.min(p1.getX(), p2.getX()),
 				y = Double.min(p1.getY(), p2.getY()),
 				dx = p1.getX() - p2.getX(), w = Double.max(dx, -dx),
-				dy = p1.getY() - p2.getY(), h = Double.max(dy, -dy);
+				dy = p1.getY() - p2.getY(), h = Double.max(dy, -dy),
+				lw = getLineWidth();
 		gc.setFill(getFillColor());
 		gc.setStroke(getStrokeColor());
-		gc.setLineWidth(getLineWidth());
+		gc.setLineWidth(lw);
 		gc.fillOval(x, y, w, h);
-		gc.strokeOval(x, y, w, h);
+		if (lw > 0) gc.strokeOval(x, y, w, h);
 	}
 }
