@@ -34,5 +34,6 @@ public class Polygon extends ClosedShape {
 		gc.setStroke(getStrokeColor());
 		gc.setLineWidth(getLineWidth());
 		gc.strokePolygon(xPoly, yPoly, len);
+		gc.fillPolygon(xPoly, yPoly, len);
 	}
 }//end Polygon

@@ -30,18 +30,7 @@ public class Parallelogram extends Polygon {
 			points.add(p4);
 			super.setPoints(points);
 		}
-		//super.draw(gc);
-		int len = 4;
-		double[] xPoly = new double[len];
-		double[] yPoly = new double[len];
-		for (int i = 0; i < len; i++) {
-			xPoly[i] = getPoints().get(i).getX();
-			yPoly[i] = getPoints().get(i).getY();
-		}
-		gc.setFill(getFillColor());
-		gc.setStroke(getStrokeColor());
-		gc.setLineWidth(getLineWidth());
-		gc.strokePolygon(xPoly, yPoly, len);
+		super.draw(gc);
 	}
 
 }//end Parallelogram
