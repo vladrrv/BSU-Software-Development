@@ -34,7 +34,7 @@ public class Controller {
     @FXML private ComboBox<String> lineStyleCb;
 
     enum ShapeType {
-        SEGMENT(0), RAY(1), LINE(2), ELLIPSE(3), CIRCLE(4);
+        SEGMENT(0), RAY(1), LINE(2), ELLIPSE(3), CIRCLE(4), POLYGON(5), RECTANGLE(6), REGPOLYGON(7), PARALLELOGRAM(8), RHOMBUS(9);
         String fullName;
         int nPoints;
         ShapeType(int v) {
@@ -57,10 +57,37 @@ public class Controller {
                 case 3: {
                     fullName = "Ellipse";
                     nPoints = Ellipse.getnPoints();
+                    break;
                 }
                 case 4: {
                     fullName = "Circle";
                     nPoints = Circle.getnPoints();
+                    break;
+                }
+                case 5: {
+                    fullName = "Polygon";
+                    nPoints = 3;
+                    break;
+                }
+                case 6: {
+                    fullName = "Rectangle";
+                    nPoints = Rectangle.getnPoints();
+                    break;
+                }
+                case 7: {
+                    fullName = "Regular Polygon";
+                    nPoints = RegularPolygon.getnPoints();
+                    break;
+                }
+                case 8: {
+                    fullName = "Parallelogram";
+                    nPoints = Parallelogram.getnPoints();
+                    break;
+                }
+                case 9: {
+                    fullName = "Rhombus";
+                    nPoints = Rhombus.getnPoints();
+                    break;
                 }
             }
         }
@@ -253,6 +280,26 @@ public class Controller {
             }
             case CIRCLE: {
                 shape = new Circle(pool, stroke, fill, lineWidth);
+                break;
+            }
+            case POLYGON: {
+                shape = new Polygon(pool, stroke, fill, lineWidth);
+                break;
+            }
+            case RECTANGLE: {
+                shape = new Rectangle(pool, stroke, fill, lineWidth);
+                break;
+            }
+            case REGPOLYGON: {
+                shape = new RegularPolygon(pool, stroke, fill, lineWidth);
+                break;
+            }
+            case PARALLELOGRAM: {
+                shape = new Parallelogram(pool, stroke, fill, lineWidth);
+                break;
+            }
+            case RHOMBUS: {
+                shape = new Rhombus(pool, stroke, fill, lineWidth);
                 break;
             }
         }
