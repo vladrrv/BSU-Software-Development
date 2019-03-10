@@ -18,6 +18,7 @@ public class Polygon extends ClosedShape {
 		return getPoints().size();
 	}*/
 	public Polygon(ArrayList<Point2D> points, Color strokeColor, Color fillColor, double lineWidth){
+		super(points, strokeColor, fillColor, lineWidth);
 	}
 
 
