@@ -34,7 +34,7 @@ public class Controller {
     @FXML private ComboBox<String> lineStyleCb;
 
     enum ShapeType {
-        SEGMENT(0), RAY(1), LINE(2), ELLIPSE(3);
+        SEGMENT(0), RAY(1), LINE(2), ELLIPSE(3), CIRCLE(4);
         String fullName;
         int nPoints;
         ShapeType(int v) {
@@ -57,6 +57,10 @@ public class Controller {
                 case 3: {
                     fullName = "Ellipse";
                     nPoints = Ellipse.getnPoints();
+                }
+                case 4: {
+                    fullName = "Circle";
+                    nPoints = Circle.getnPoints();
                 }
             }
         }
@@ -245,6 +249,10 @@ public class Controller {
             }
             case ELLIPSE: {
                 shape = new Ellipse(pool, stroke, fill, lineWidth);
+                break;
+            }
+            case CIRCLE: {
+                shape = new Circle(pool, stroke, fill, lineWidth);
                 break;
             }
         }
