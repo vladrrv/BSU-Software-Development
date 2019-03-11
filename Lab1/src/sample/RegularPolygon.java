@@ -6,19 +6,18 @@ import javafx.scene.paint.Color;
 
 import java.util.ArrayList;
 
-/**
- * @author User
- * @version 1.0
- * @created 03-Mar-2019 3:07:23 PM
- */
+
 public class RegularPolygon extends Polygon {
 
-	private int nVertices = 12;
 	public static int getnPoints() {
 		return 2;
 	}
-	public RegularPolygon(ArrayList<Point2D> points, Color strokeColor, Color fillColor, double lineWidth){
+
+	private int nVertices;
+
+	public RegularPolygon(int nVertices, ArrayList<Point2D> points, Color strokeColor, Color fillColor, double lineWidth) {
 		super(points, strokeColor, fillColor, lineWidth);
+		this.nVertices = nVertices;
 	}
 
 	@Override
@@ -43,15 +42,11 @@ public class RegularPolygon extends Polygon {
 		super.draw(gc);
 	}
 
-	public int getNVertices(){
+	public int getNVertices() {
 		return nVertices;
 	}
 
-	/**
-	 * 
-	 * @param nVertices
-	 */
-	public void setNVertices(int nVertices){
-
+	public void setNVertices(int nVertices) {
+		this.nVertices = nVertices;
 	}
-}//end RegularPolygon
+}
