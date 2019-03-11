@@ -48,7 +48,6 @@ public class Circle extends Ellipse {
 		}
 		newPoint2 = new Point2D(x,y);
 		getPoints().set(1, newPoint2);
-		System.out.print(getPoints().get(0).toString() + getPoints().get(1).toString());
 		super.draw(gc);
 	}
 }
