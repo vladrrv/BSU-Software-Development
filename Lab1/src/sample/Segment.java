@@ -3,6 +3,7 @@ package sample;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Line;
 
 public class Segment extends OpenShape {
 
@@ -31,6 +32,15 @@ public class Segment extends OpenShape {
 		gc.setLineWidth(this.getLineWidth());
 		gc.setLineDashes(this.getLineDashes());
 		gc.strokeLine(startPoint.getX(), startPoint.getY(), endPoint.getX(), endPoint.getY());
+	}
+
+	@Override
+	public void move(Point2D newCenter) {
+		Point2D oldCenter = getCenter(), sp = getStartPoint(), ep = getEndPoint();
+		double dx = newCenter.getX() - oldCenter.getX(), dy = newCenter.getY() - oldCenter.getY();
+		setStartPoint(new Point2D(sp.getX()+dx, sp.getY()+dy));
+		setEndPoint(new Point2D(ep.getX()+dx, ep.getY()+dy));
+		setCenter(newCenter);
 	}
 
 	public Point2D getStartPoint(){

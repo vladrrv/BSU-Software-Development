@@ -50,5 +50,4 @@ public abstract class Shape {
 	public double getLineWidth() {
 		return lineWidth;
 	}
-
 }

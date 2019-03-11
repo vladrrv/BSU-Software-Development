@@ -2,6 +2,7 @@ package sample;
 
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
+import javafx.collections.ObservableList;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.scene.Cursor;
@@ -33,6 +34,8 @@ public class Controller {
     @FXML private GridPane shapeSelectionPane;
     @FXML private TextField lineWidthTf;
     @FXML private ComboBox<String> lineStyleCb;
+    @FXML private ListView<Shape> shapesLv;
+    @FXML private CheckBox moveButton;
 
     enum ShapeType {
         SEGMENT(0), RAY(1), LINE(2), POLYLINE(3),
@@ -136,7 +139,7 @@ public class Controller {
             strDashed = "Dashed",
             strDotted = "Dotted";
 
-    private ArrayList<Shape> shapes;
+    private ObservableList<Shape> shapes;
 
     private TextInputDialog createNVerticesDialog() {
         TextInputDialog dialog = new TextInputDialog("5");
@@ -329,12 +332,21 @@ public class Controller {
         ChangeListener<Number> canvasSizeListener = (observable, oldValue, newValue) -> drawShapes();
         canvas.widthProperty().addListener(canvasSizeListener);
         canvas.heightProperty().addListener(canvasSizeListener);
+
+        moveButton.getStyleClass().remove("check-box");
+        moveButton.getStyleClass().add("toggle-button");
+        shapesLv.getSelectionModel().selectedItemProperty().addListener(
+                (observable, oldValue, newValue)-> {
+                    moveButton.setDisable(newValue == null);
+                    System.out.println(newValue);
+                }
+        );
     }
 
     private void setVariables() {
         pool = new ArrayList<>();
         currentLimit = NO_DRAW;
-        shapes = new ArrayList<>();
+        shapes = shapesLv.getItems();
     }
 
     @FXML private void initialize() {
@@ -358,17 +370,28 @@ public class Controller {
         coordLabel.setText(String.format("X: %.1f, Y: %.1f", x, y));
     }
 
-    @FXML private void addPoint(MouseEvent event) {
-        if (event.getButton().equals(MouseButton.PRIMARY) && currentLimit != NO_DRAW) {
-            if (event.getClickCount() == 1) {
-                Point2D newPoint = new Point2D(event.getX(), event.getY());
-                pool.add(newPoint);
-                drawPoint(newPoint);
-            }
-            if (pool.size() == currentLimit || event.getClickCount() == 2 && currentLimit == UNLIMITED) {
-                newShape();
+    @FXML private void clickOnCanvas(MouseEvent event) {
+        MouseButton mb = event.getButton();
+        Point2D newPoint = new Point2D(event.getX(), event.getY());
+        if (mb.equals(MouseButton.PRIMARY)) {
+            if (moveButton.isSelected()) {
                 pool.clear();
+                Shape shape = shapesLv.getSelectionModel().getSelectedItem();
+                shape.move(newPoint);
+                moveButton.setSelected(false);
                 drawShapes();
+                return;
+            }
+            if (currentLimit != NO_DRAW) {
+                if (event.getClickCount() == 1) {
+                    pool.add(newPoint);
+                    drawPoint(newPoint);
+                }
+                if (pool.size() == currentLimit || event.getClickCount() == 2 && currentLimit == UNLIMITED) {
+                    newShape();
+                    pool.clear();
+                    drawShapes();
+                }
             }
         }
     }
