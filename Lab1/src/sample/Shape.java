@@ -32,7 +32,7 @@ public abstract class Shape {
 	}
 
 	public String location() {
-		return "(" + getCenter().getX() + ", " + getCenter().getY() + ")";
+		return "(" + Math.round(getCenter().getX()) + ", " + Math.round(getCenter().getY()) + ")";
 	}
 
 	public void move(Point2D newCenter) {
