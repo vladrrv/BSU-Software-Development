@@ -6,11 +6,7 @@ import javafx.scene.paint.Color;
 
 import java.util.ArrayList;
 
-/**
- * @author User
- * @version 1.0
- * @created 03-Mar-2019 3:07:23 PM
- */
+
 public class Parallelogram extends Polygon {
 	public static int getnPoints() {
 		return 3;
@@ -33,4 +29,4 @@ public class Parallelogram extends Polygon {
 		super.draw(gc);
 	}
 
-}//end Parallelogram
+}

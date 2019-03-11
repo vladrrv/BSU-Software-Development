@@ -9,6 +9,7 @@ import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import javafx.util.Pair;
@@ -34,59 +35,74 @@ public class Controller {
     @FXML private ComboBox<String> lineStyleCb;
 
     enum ShapeType {
-        SEGMENT(0), RAY(1), LINE(2), ELLIPSE(3), CIRCLE(4), POLYGON(5), RECTANGLE(6), REGPOLYGON(7), PARALLELOGRAM(8), RHOMBUS(9);
+        SEGMENT(0), RAY(1), LINE(2),
+        ELLIPSE(3), CIRCLE(4),
+        POLYGON(5), RECTANGLE(6), REGPOLYGON(7), PARALLELOGRAM(8), RHOMBUS(9);
+
         String fullName;
         int nPoints;
+        boolean hasLineStyle;
+
         ShapeType(int v) {
             switch (v) {
                 case 0: {
                     fullName = "Segment";
                     nPoints = Segment.getnPoints();
+                    hasLineStyle = true;
                     break;
                 }
                 case 1: {
                     fullName = "Ray";
                     nPoints = Ray.getnPoints();
+                    hasLineStyle = true;
                     break;
                 }
                 case 2: {
                     fullName = "Line";
                     nPoints = Line.getnPoints();
+                    hasLineStyle = true;
                     break;
                 }
                 case 3: {
                     fullName = "Ellipse";
                     nPoints = Ellipse.getnPoints();
+                    hasLineStyle = false;
                     break;
                 }
                 case 4: {
                     fullName = "Circle";
                     nPoints = Circle.getnPoints();
+                    hasLineStyle = false;
                     break;
                 }
                 case 5: {
                     fullName = "Polygon";
-                    nPoints = 3;
+                    nPoints = Polygon.getnPoints();
+                    hasLineStyle = false;
                     break;
                 }
                 case 6: {
                     fullName = "Rectangle";
                     nPoints = Rectangle.getnPoints();
+                    hasLineStyle = false;
                     break;
                 }
                 case 7: {
                     fullName = "Regular Polygon";
                     nPoints = RegularPolygon.getnPoints();
+                    hasLineStyle = false;
                     break;
                 }
                 case 8: {
                     fullName = "Parallelogram";
                     nPoints = Parallelogram.getnPoints();
+                    hasLineStyle = false;
                     break;
                 }
                 case 9: {
                     fullName = "Rhombus";
                     nPoints = Rhombus.getnPoints();
+                    hasLineStyle = false;
                     break;
                 }
             }
@@ -98,13 +114,18 @@ public class Controller {
         public int getnPoints() {
             return nPoints;
         }
+
+        public boolean hasLineStyle() {
+            return hasLineStyle;
+        }
     }
 
     private GraphicsContext gc;
     private boolean isDrawing;
     private ArrayList<Point2D> pool;
     private ShapeType currentShape;
-    private int currentLimit;
+    private int currentLimit, nVertices;
+    private final int NO_DRAW = -2, UNLIMITED = -1;
     private final String
             strSolid = "Solid",
             strDashed = "Dashed",
@@ -138,6 +159,17 @@ public class Controller {
                 drawShapes();
                 currentShape = v;
                 currentLimit = v.getnPoints();
+                lineStyleCb.setDisable(!v.hasLineStyle());
+                if (v == ShapeType.REGPOLYGON) {
+                    TextInputDialog dialog = createNVerticesDialog();
+                    Optional<String> result = dialog.showAndWait();
+                    if (result.isPresent())
+                        nVertices = Integer.valueOf(result.get());
+                    else {
+                        rb.setSelected(false);
+                        currentLimit = NO_DRAW;
+                    }
+                }
             });
             shapeSelectionPane.add(rb, i % c, i++ / c);
             GridPane.setHalignment(rb, HPos.CENTER);
@@ -154,11 +186,19 @@ public class Controller {
     private void setVariables() {
         pool = new ArrayList<>();
         isDrawing = false;
-        currentLimit = -1;
+        currentLimit = NO_DRAW;
         shapes = new ArrayList<>();
     }
 
-    private Dialog<Pair<Double, Double>> createDialog() {
+    private TextInputDialog createNVerticesDialog() {
+        TextInputDialog dialog = new TextInputDialog("5");
+        dialog.setTitle("Enter number of vertices");
+        dialog.setHeaderText("Specify number of vertices of regular polygon");
+        dialog.setContentText("Enter integer: ");
+        return dialog;
+    }
+
+    private Dialog<Pair<Double, Double>> createCanvasDialog() {
         Dialog<Pair<Double, Double>> dialog = new Dialog<>();
         dialog.setTitle("New Canvas");
         dialog.setHeaderText("Please, enter dimensions of the new canvas.");
@@ -208,7 +248,7 @@ public class Controller {
     }
 
     @FXML private void newCanvas() {
-        Dialog<Pair<Double, Double>> dialog = createDialog();
+        Dialog<Pair<Double, Double>> dialog = createCanvasDialog();
         Optional<Pair<Double, Double>> result = dialog.showAndWait();
 
         result.ifPresent(widthHeight -> {
@@ -229,13 +269,17 @@ public class Controller {
     }
 
     @FXML private void addPoint(MouseEvent event) {
-        Point2D newPoint = new Point2D(event.getX(), event.getY());
-        pool.add(newPoint);
-        drawPoint(newPoint);
-        if (pool.size() == currentLimit) {
-            newShape();
-            pool.clear();
-            drawShapes();
+        if (event.getButton().equals(MouseButton.PRIMARY) && currentLimit != NO_DRAW) {
+            if (event.getClickCount() == 1) {
+                Point2D newPoint = new Point2D(event.getX(), event.getY());
+                pool.add(newPoint);
+                drawPoint(newPoint);
+            }
+            if (pool.size() == currentLimit || event.getClickCount() == 2 && currentLimit == UNLIMITED) {
+                newShape();
+                pool.clear();
+                drawShapes();
+            }
         }
     }
 
@@ -291,7 +335,7 @@ public class Controller {
                 break;
             }
             case REGPOLYGON: {
-                shape = new RegularPolygon(pool, stroke, fill, lineWidth);
+                shape = new RegularPolygon(nVertices, pool, stroke, fill, lineWidth);
                 break;
             }
             case PARALLELOGRAM: {
