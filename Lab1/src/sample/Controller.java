@@ -8,6 +8,7 @@ import javafx.geometry.Insets;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.effect.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
@@ -302,6 +303,12 @@ public class Controller {
             ImageView iv = new ImageView(new Image("file:res/icon_"+name+".png"));
             iv.setPreserveRatio(true);
             iv.setFitHeight(32);
+            DropShadow shadow = new DropShadow();
+            shadow.setRadius(4);
+            shadow.setOffsetX(1);
+            shadow.setOffsetY(1);
+            shadow.setColor(Color.GRAY);
+            iv.setEffect(shadow);
             rb.setGraphic(iv);
             rb.setTooltip(new Tooltip(v.getFullName()));
             rb.setOnAction(event -> {
@@ -378,6 +385,7 @@ public class Controller {
                 pool.clear();
                 Shape shape = shapesLv.getSelectionModel().getSelectedItem();
                 shape.move(newPoint);
+                shapesLv.refresh();
                 moveButton.setSelected(false);
                 drawShapes();
                 return;
