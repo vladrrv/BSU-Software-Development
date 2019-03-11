@@ -35,9 +35,7 @@ public abstract class Shape {
 		return "(" + Math.round(getCenter().getX()) + ", " + Math.round(getCenter().getY()) + ")";
 	}
 
-	public void move(Point2D newCenter) {
-
-	}
+	public abstract void move(Point2D newCenter);
 
 	public void setCenter(Point2D center) {
 		this.center = center;
