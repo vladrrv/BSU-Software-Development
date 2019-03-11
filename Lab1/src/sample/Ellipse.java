@@ -27,6 +27,7 @@ public class Ellipse extends ClosedShape {
 		gc.setFill(getFillColor());
 		gc.setStroke(getStrokeColor());
 		gc.setLineWidth(lw);
+		gc.setLineDashes();
 		gc.fillOval(x, y, w, h);
 		if (lw > 0) gc.strokeOval(x, y, w, h);
 	}

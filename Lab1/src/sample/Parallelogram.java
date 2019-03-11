@@ -8,12 +8,15 @@ import java.util.ArrayList;
 
 
 public class Parallelogram extends Polygon {
+
 	public static int getnPoints() {
 		return 3;
 	}
+
 	public Parallelogram(ArrayList<Point2D> points, Color strokeColor, Color fillColor, double lineWidth){
 		super(points, strokeColor, fillColor, lineWidth);
 	}
+
 	public void draw(GraphicsContext gc) {
 		if (getPoints().size() == 3) {
 			Point2D center = getPoints().get(0), p1 = getPoints().get(1), p2 = getPoints().get(2),

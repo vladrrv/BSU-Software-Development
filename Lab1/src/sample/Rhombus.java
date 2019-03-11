@@ -7,9 +7,11 @@ import javafx.scene.paint.Color;
 import java.util.ArrayList;
 
 public class Rhombus extends Parallelogram {
+
 	public static int getnPoints() {
 		return 3;
 	}
+
 	public Rhombus(ArrayList<Point2D> points, Color strokeColor, Color fillColor, double lineWidth){
 		super(points, strokeColor, fillColor, lineWidth);
 	}

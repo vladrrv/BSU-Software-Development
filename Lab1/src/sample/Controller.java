@@ -24,8 +24,8 @@ import javafx.scene.input.MouseEvent;
 import java.util.ArrayList;
 import java.util.Optional;
 
-
 public class Controller {
+
     @FXML private Canvas canvas;
     @FXML private ColorPicker strokePicker;
     @FXML private ColorPicker fillPicker;
@@ -35,13 +35,13 @@ public class Controller {
     @FXML private ComboBox<String> lineStyleCb;
 
     enum ShapeType {
-        SEGMENT(0), RAY(1), LINE(2),
-        ELLIPSE(3), CIRCLE(4),
-        POLYGON(5), RECTANGLE(6), REGPOLYGON(7), PARALLELOGRAM(8), RHOMBUS(9);
+        SEGMENT(0), RAY(1), LINE(2), POLYLINE(3),
+        ELLIPSE(4), CIRCLE(5),
+        POLYGON(6), RECTANGLE(7), REGPOLYGON(8), PARALLELOGRAM(9), RHOMBUS(10);
 
-        String fullName;
-        int nPoints;
-        boolean hasLineStyle;
+        private String fullName;
+        private int nPoints;
+        private boolean hasLineStyle;
 
         ShapeType(int v) {
             switch (v) {
@@ -64,42 +64,48 @@ public class Controller {
                     break;
                 }
                 case 3: {
+                    fullName = "Polyline";
+                    nPoints = Polyline.getnPoints();
+                    hasLineStyle = true;
+                    break;
+                }
+                case 4: {
                     fullName = "Ellipse";
                     nPoints = Ellipse.getnPoints();
                     hasLineStyle = false;
                     break;
                 }
-                case 4: {
+                case 5: {
                     fullName = "Circle";
                     nPoints = Circle.getnPoints();
                     hasLineStyle = false;
                     break;
                 }
-                case 5: {
+                case 6: {
                     fullName = "Polygon";
                     nPoints = Polygon.getnPoints();
                     hasLineStyle = false;
                     break;
                 }
-                case 6: {
+                case 7: {
                     fullName = "Rectangle";
                     nPoints = Rectangle.getnPoints();
                     hasLineStyle = false;
                     break;
                 }
-                case 7: {
+                case 8: {
                     fullName = "Regular Polygon";
                     nPoints = RegularPolygon.getnPoints();
                     hasLineStyle = false;
                     break;
                 }
-                case 8: {
+                case 9: {
                     fullName = "Parallelogram";
                     nPoints = Parallelogram.getnPoints();
                     hasLineStyle = false;
                     break;
                 }
-                case 9: {
+                case 10: {
                     fullName = "Rhombus";
                     nPoints = Rhombus.getnPoints();
                     hasLineStyle = false;
@@ -121,7 +127,6 @@ public class Controller {
     }
 
     private GraphicsContext gc;
-    private boolean isDrawing;
     private ArrayList<Point2D> pool;
     private ShapeType currentShape;
     private int currentLimit, nVertices;
@@ -132,63 +137,6 @@ public class Controller {
             strDotted = "Dotted";
 
     private ArrayList<Shape> shapes;
-
-    private void setInitialControls() {
-        coordLabel.setText("");
-        strokePicker.setValue(Color.BLACK);
-        lineStyleCb.getItems().addAll(strSolid, strDashed, strDotted);
-        lineStyleCb.setValue(strSolid);
-
-        int i = 0, c = shapeSelectionPane.getColumnCount();
-        ToggleGroup gr = new ToggleGroup();
-        for (ShapeType v : ShapeType.values()) {
-            if (i % c == 0) shapeSelectionPane.addRow(i / c);
-            String name = v.name();
-            RadioButton rb = new RadioButton();
-            rb.setToggleGroup(gr);
-            rb.setCursor(Cursor.HAND);
-            rb.getStyleClass().remove("radio-button");
-            rb.getStyleClass().add("toggle-button");
-            ImageView iv = new ImageView(new Image("file:res/icon_"+name+".png"));
-            iv.setPreserveRatio(true);
-            iv.setFitHeight(32);
-            rb.setGraphic(iv);
-            rb.setTooltip(new Tooltip(v.getFullName()));
-            rb.setOnAction(event -> {
-                pool.clear();
-                drawShapes();
-                currentShape = v;
-                currentLimit = v.getnPoints();
-                lineStyleCb.setDisable(!v.hasLineStyle());
-                if (v == ShapeType.REGPOLYGON) {
-                    TextInputDialog dialog = createNVerticesDialog();
-                    Optional<String> result = dialog.showAndWait();
-                    if (result.isPresent())
-                        nVertices = Integer.valueOf(result.get());
-                    else {
-                        rb.setSelected(false);
-                        currentLimit = NO_DRAW;
-                    }
-                }
-            });
-            shapeSelectionPane.add(rb, i % c, i++ / c);
-            GridPane.setHalignment(rb, HPos.CENTER);
-        }
-
-        gc = canvas.getGraphicsContext2D();
-        gc.setFill(Color.WHITE);
-        gc.fillRect(0,0, canvas.getWidth(), canvas.getHeight());
-
-        ChangeListener<Number> canvasSizeListener = (observable, oldValue, newValue) -> drawShapes();
-        canvas.widthProperty().addListener(canvasSizeListener);
-        canvas.heightProperty().addListener(canvasSizeListener);
-    }
-    private void setVariables() {
-        pool = new ArrayList<>();
-        isDrawing = false;
-        currentLimit = NO_DRAW;
-        shapes = new ArrayList<>();
-    }
 
     private TextInputDialog createNVerticesDialog() {
         TextInputDialog dialog = new TextInputDialog("5");
@@ -247,42 +195,6 @@ public class Controller {
         return dialog;
     }
 
-    @FXML private void newCanvas() {
-        Dialog<Pair<Double, Double>> dialog = createCanvasDialog();
-        Optional<Pair<Double, Double>> result = dialog.showAndWait();
-
-        result.ifPresent(widthHeight -> {
-            canvas.setWidth(widthHeight.getKey());
-            canvas.setHeight(widthHeight.getValue());
-            clear();
-        });
-    }
-
-    @FXML private void initialize() {
-        setInitialControls();
-        setVariables();
-    }
-
-    @FXML private void showCursorCoord(MouseEvent event) {
-        double x = event.getX(), y = event.getY();
-        coordLabel.setText(String.format("X: %.1f, Y: %.1f", x, y));
-    }
-
-    @FXML private void addPoint(MouseEvent event) {
-        if (event.getButton().equals(MouseButton.PRIMARY) && currentLimit != NO_DRAW) {
-            if (event.getClickCount() == 1) {
-                Point2D newPoint = new Point2D(event.getX(), event.getY());
-                pool.add(newPoint);
-                drawPoint(newPoint);
-            }
-            if (pool.size() == currentLimit || event.getClickCount() == 2 && currentLimit == UNLIMITED) {
-                newShape();
-                pool.clear();
-                drawShapes();
-            }
-        }
-    }
-
     private int selectStyle() {
         switch (lineStyleCb.getValue()) {
             case strSolid: {
@@ -316,6 +228,10 @@ public class Controller {
             }
             case LINE: {
                 shape = new Line(pool.get(0), pool.get(1), stroke, lineWidth, lineStyle);
+                break;
+            }
+            case POLYLINE: {
+                shape = new Polyline(pool, stroke, lineWidth, lineStyle);
                 break;
             }
             case ELLIPSE: {
@@ -361,6 +277,99 @@ public class Controller {
         gc.fillRect(0,0, canvas.getWidth(), canvas.getHeight());
         for (Shape shape : shapes) {
             shape.draw(gc);
+        }
+    }
+
+    private void setInitialControls() {
+        coordLabel.setText("");
+        strokePicker.setValue(Color.BLACK);
+        lineStyleCb.getItems().addAll(strSolid, strDashed, strDotted);
+        lineStyleCb.setValue(strSolid);
+
+        int i = 0, c = shapeSelectionPane.getColumnCount();
+        ToggleGroup gr = new ToggleGroup();
+        for (ShapeType v : ShapeType.values()) {
+            if (i % c == 0) shapeSelectionPane.addRow(i / c);
+            String name = v.name();
+            RadioButton rb = new RadioButton();
+            rb.setToggleGroup(gr);
+            rb.setCursor(Cursor.HAND);
+            rb.getStyleClass().remove("radio-button");
+            rb.getStyleClass().add("toggle-button");
+            ImageView iv = new ImageView(new Image("file:res/icon_"+name+".png"));
+            iv.setPreserveRatio(true);
+            iv.setFitHeight(32);
+            rb.setGraphic(iv);
+            rb.setTooltip(new Tooltip(v.getFullName()));
+            rb.setOnAction(event -> {
+                pool.clear();
+                drawShapes();
+                currentShape = v;
+                currentLimit = v.getnPoints();
+                lineStyleCb.setDisable(!v.hasLineStyle());
+                if (v == ShapeType.REGPOLYGON) {
+                    TextInputDialog dialog = createNVerticesDialog();
+                    Optional<String> result = dialog.showAndWait();
+                    if (result.isPresent())
+                        nVertices = Integer.valueOf(result.get());
+                    else {
+                        rb.setSelected(false);
+                        currentLimit = NO_DRAW;
+                    }
+                }
+            });
+            shapeSelectionPane.add(rb, i % c, i++ / c);
+            GridPane.setHalignment(rb, HPos.CENTER);
+        }
+
+        gc = canvas.getGraphicsContext2D();
+        gc.setFill(Color.WHITE);
+        gc.fillRect(0,0, canvas.getWidth(), canvas.getHeight());
+
+        ChangeListener<Number> canvasSizeListener = (observable, oldValue, newValue) -> drawShapes();
+        canvas.widthProperty().addListener(canvasSizeListener);
+        canvas.heightProperty().addListener(canvasSizeListener);
+    }
+
+    private void setVariables() {
+        pool = new ArrayList<>();
+        currentLimit = NO_DRAW;
+        shapes = new ArrayList<>();
+    }
+
+    @FXML private void initialize() {
+        setInitialControls();
+        setVariables();
+    }
+
+    @FXML private void newCanvas() {
+        Dialog<Pair<Double, Double>> dialog = createCanvasDialog();
+        Optional<Pair<Double, Double>> result = dialog.showAndWait();
+
+        result.ifPresent(widthHeight -> {
+            canvas.setWidth(widthHeight.getKey());
+            canvas.setHeight(widthHeight.getValue());
+            clear();
+        });
+    }
+
+    @FXML private void showCursorCoord(MouseEvent event) {
+        double x = event.getX(), y = event.getY();
+        coordLabel.setText(String.format("X: %.1f, Y: %.1f", x, y));
+    }
+
+    @FXML private void addPoint(MouseEvent event) {
+        if (event.getButton().equals(MouseButton.PRIMARY) && currentLimit != NO_DRAW) {
+            if (event.getClickCount() == 1) {
+                Point2D newPoint = new Point2D(event.getX(), event.getY());
+                pool.add(newPoint);
+                drawPoint(newPoint);
+            }
+            if (pool.size() == currentLimit || event.getClickCount() == 2 && currentLimit == UNLIMITED) {
+                newShape();
+                pool.clear();
+                drawShapes();
+            }
         }
     }
 
