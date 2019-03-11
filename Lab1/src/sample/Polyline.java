@@ -23,8 +23,19 @@ public class Polyline extends OpenShape {
 	}
 
 	public void draw(GraphicsContext gc) {
+		Point2D start = segments.get(0).getStartPoint(), end = segments.get(segments.size() - 1).getEndPoint();
+		Point2D center = new Point2D((start.getX() + end.getX())/2, (start.getY() + end.getY())/2);
+		setCenter(center);
 		for (Segment segment : segments) {
 			segment.draw(gc);
+			segment.setCenter(center);
+		}
+	}
+
+	@Override
+	public void move(Point2D newCenter) {
+		for (Segment segment : segments) {
+			segment.move(newCenter);
 		}
 	}
 
