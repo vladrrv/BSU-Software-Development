@@ -38,4 +38,19 @@ public abstract class ClosedShape extends Shape {
 	public void setPoints(ArrayList<Point2D> points) {
 		this.points = points;
 	}
+
+	@Override
+	public void move(Point2D newCenter) {
+		Point2D oldCenter = getCenter();
+		double delta_x = newCenter.getX() - oldCenter.getX(),  delta_y = newCenter.getY() - oldCenter.getY();
+		ArrayList<Point2D> points = getPoints();
+		int len = points.size();
+		double newX, newY;
+		for (int i = 0; i < len; i++) {
+			newX = points.get(i).getX() + delta_x;
+			newY = points.get(i).getY() + delta_y;
+			points.set(i, new Point2D(newX, newY));
+		}
+		setCenter(newCenter);
+	}
 }
