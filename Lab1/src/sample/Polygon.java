@@ -13,10 +13,10 @@ public class Polygon extends ClosedShape {
 	public static int getnPoints() {
 		return -1;
 	}
+
 	public Polygon(ArrayList<Point2D> points, Color strokeColor, Color fillColor, double lineWidth){
 		super(points, strokeColor, fillColor, lineWidth);
 	}
-
 
 	public void draw(GraphicsContext gc){
 		int len = getPoints().size();
@@ -29,6 +29,7 @@ public class Polygon extends ClosedShape {
 		gc.setFill(getFillColor());
 		gc.setStroke(getStrokeColor());
 		gc.setLineWidth(getLineWidth());
+		gc.setLineDashes();
 		gc.fillPolygon(xPoly, yPoly, len);
 		gc.strokePolygon(xPoly, yPoly, len);
 	}

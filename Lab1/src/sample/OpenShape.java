@@ -19,24 +19,9 @@ public abstract class OpenShape extends Shape {
 
 	private LineStyle lineStyle;
 
-
-	public OpenShape(){
+	public OpenShape() {
 		super();
 		this.lineStyle = LineStyle.SOLID;
-	}
-
-	public OpenShape(Color strokeColor) {
-		super(strokeColor);
-		this.lineStyle = LineStyle.SOLID;
-	}
-
-	public OpenShape(Color strokeColor, double lineWidth) {
-		super(strokeColor, lineWidth);
-	}
-
-	public OpenShape(Color strokeColor, int lineStyle) {
-		super(strokeColor);
-		this.lineStyle = LineStyle.values()[lineStyle];
 	}
 
 	public OpenShape(Color strokeColor, double lineWidth, int lineStyle) {

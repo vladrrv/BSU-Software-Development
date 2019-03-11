@@ -11,18 +11,6 @@ public class Line extends Segment {
 		super();
 	}
 
-	public Line(Point2D startPoint, Point2D endPoint) {
-		super(startPoint, endPoint);
-	}
-
-	public Line(Point2D startPoint, Point2D endPoint, Color strokeColor) {
-		super(startPoint, endPoint, strokeColor);
-	}
-
-	public Line(Point2D startPoint, Point2D endPoint, Color strokeColor, int lineStyle) {
-		super(startPoint, endPoint, strokeColor, lineStyle);
-	}
-
 	public Line(Point2D startPoint, Point2D endPoint, Color strokeColor, double lineWidth, int lineStyle) {
 		super(startPoint, endPoint, strokeColor, lineWidth, lineStyle);
 	}

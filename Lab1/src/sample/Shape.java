@@ -4,7 +4,6 @@ import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
-
 public abstract class Shape {
 
 	private Color strokeColor;
@@ -16,40 +15,35 @@ public abstract class Shape {
 		this.center = new Point2D(0,0);
 	}
 
-	public Shape(Color strokeColor) {
-		this.strokeColor = strokeColor;
-		this.lineWidth = 1;
-		this.center = new Point2D(0,0);
-	}
-
 	public Shape(Color strokeColor, double lineWidth) {
 		this.strokeColor = strokeColor;
 		this.lineWidth = lineWidth;
+		this.center = new Point2D(0,0);
 	}
 
 	public abstract void draw(GraphicsContext gc);
 
-	public Point2D getCenter(){
+	public Point2D getCenter() {
 		return center;
 	}
 
-	public Color getStrokeColor(){
+	public Color getStrokeColor() {
 		return strokeColor;
 	}
 
-	public Point2D location(){
+	public Point2D location() {
 		return null;
 	}
 
-	public void move(Point2D newCenter){
+	public void move(Point2D newCenter) {
 
 	}
 
-	public void setCenter(Point2D center){
+	public void setCenter(Point2D center) {
 		this.center = center;
 	}
 
-	public void setStrokeColor(Color color){
+	public void setStrokeColor(Color color) {
 		this.strokeColor = color;
 	}
 
