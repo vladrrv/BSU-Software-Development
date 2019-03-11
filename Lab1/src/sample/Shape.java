@@ -31,8 +31,8 @@ public abstract class Shape {
 		return strokeColor;
 	}
 
-	public Point2D location() {
-		return null;
+	public String location() {
+		return "(" + getCenter().getX() + ", " + getCenter().getY() + ")";
 	}
 
 	public void move(Point2D newCenter) {
@@ -49,5 +49,10 @@ public abstract class Shape {
 
 	public double getLineWidth() {
 		return lineWidth;
+	}
+
+	@Override
+	public String toString() {
+		return this.getClass().getSimpleName() + " " + location();
 	}
 }
