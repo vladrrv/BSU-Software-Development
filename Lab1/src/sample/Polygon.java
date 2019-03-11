@@ -22,14 +22,11 @@ public class Polygon extends ClosedShape {
 		int len = getPoints().size();
 		double[] xPoly = new double[len];
 		double[] yPoly = new double[len];
-		double x_center = 0, y_center = 0;
 		for (int i = 0; i < len; i++) {
 			xPoly[i] = getPoints().get(i).getX();
 			yPoly[i] = getPoints().get(i).getY();
-			x_center += xPoly[i];
-			y_center += yPoly[i];
 		}
-		setCenter(new Point2D(x_center/len, y_center/len));
+		super.setCenter();
 		gc.setFill(getFillColor());
 		gc.setStroke(getStrokeColor());
 		gc.setLineWidth(getLineWidth());

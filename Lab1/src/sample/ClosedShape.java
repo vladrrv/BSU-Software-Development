@@ -16,6 +16,16 @@ public abstract class ClosedShape extends Shape {
 		this.points = new ArrayList<>();
 	}
 
+	public void setCenter() {
+		int len = getPoints().size();
+		double x_center = 0, y_center = 0;
+		for (int i = 0; i < len; i++) {
+			x_center += getPoints().get(i).getX();
+			y_center += getPoints().get(i).getY();
+		}
+		super.setCenter(new Point2D(x_center/len, y_center/len));
+	}
+
 	public ClosedShape(ArrayList<Point2D> points, Color strokeColor, Color fillColor, double lineWidth) {
 		super(strokeColor, lineWidth);
 		this.fillColor = fillColor;
