@@ -361,7 +361,6 @@ public class Controller {
         shapesLv.getSelectionModel().selectedItemProperty().addListener(
                 (observable, oldValue, newValue)-> {
                     moveButton.setDisable(newValue == null);
-                    System.out.println(newValue);
                 }
         );
     }
