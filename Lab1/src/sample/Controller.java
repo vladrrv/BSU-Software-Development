@@ -3,6 +3,7 @@ package sample;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.ObservableList;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.scene.Cursor;
@@ -11,8 +12,10 @@ import javafx.scene.control.*;
 import javafx.scene.effect.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.GridPane;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Pair;
 
@@ -23,6 +26,8 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.input.MouseEvent;
 
+import javax.imageio.ImageIO;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Optional;
 
@@ -300,16 +305,27 @@ public class Controller {
             rb.setCursor(Cursor.HAND);
             rb.getStyleClass().remove("radio-button");
             rb.getStyleClass().add("toggle-button");
-            ImageView iv = new ImageView(new Image("file:res/icon_"+name+".png"));
-            iv.setPreserveRatio(true);
-            iv.setFitHeight(32);
-            DropShadow shadow = new DropShadow();
-            shadow.setRadius(4);
-            shadow.setOffsetX(1);
-            shadow.setOffsetY(1);
-            shadow.setColor(Color.GRAY);
-            iv.setEffect(shadow);
-            rb.setGraphic(iv);
+            try {
+                ImageView iv = new ImageView(
+                        new Image(getClass().getResourceAsStream("res/icon_"+name.toLowerCase()+".png"))
+                );
+                iv.setPreserveRatio(true);
+                iv.setFitHeight(32);
+                DropShadow shadow = new DropShadow();
+                shadow.setRadius(4);
+                shadow.setOffsetX(1);
+                shadow.setOffsetY(1);
+                shadow.setColor(Color.GRAY);
+                iv.setEffect(shadow);
+                rb.setGraphic(iv);
+            }
+            catch (Exception ex) {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error");
+                alert.setHeaderText("Could not load icons");
+                alert.setContentText(ex.getLocalizedMessage());
+                alert.showAndWait();
+            }
             rb.setTooltip(new Tooltip(v.getFullName()));
             rb.setOnAction(event -> {
                 pool.clear();
@@ -408,8 +424,41 @@ public class Controller {
         drawShapes();
     }
 
+    @FXML private void about() {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("About");
+        alert.setHeaderText("Draw Shapes! Application");
+        alert.setContentText("This is an application for drawing different shapes.");
+        ImageView iv = new ImageView(new Image(getClass().getResourceAsStream("res/icon_app.png")));
+        iv.setPreserveRatio(true);
+        iv.setFitHeight(64);
+        alert.setGraphic(iv);
+        alert.showAndWait();
+    }
+
     @FXML private void close() {
         Stage stage = (Stage) canvas.getScene().getWindow();
         stage.close();
+    }
+
+    @FXML private void save() {
+        FileChooser fc = new FileChooser();
+        fc.setTitle("Save as");
+        FileChooser.ExtensionFilter ef = new FileChooser.ExtensionFilter("PNG Files", "*.png");
+        fc.getExtensionFilters().add(ef);
+        fc.setSelectedExtensionFilter(ef);
+        File file = fc.showSaveDialog(canvas.getScene().getWindow());
+        if (file != null) {
+            WritableImage wim = new WritableImage((int) canvas.getWidth(), (int) canvas.getHeight());
+            canvas.snapshot(null, wim);
+            try {
+                ImageIO.write(SwingFXUtils.fromFXImage(wim, null), "png", file);
+            } catch (Exception ex) {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error");
+                alert.setHeaderText("Could not save file.");
+                alert.setContentText(ex.getLocalizedMessage());
+            }
+        }
     }
 }
