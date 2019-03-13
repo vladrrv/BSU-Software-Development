@@ -139,11 +139,11 @@ public class Controller {
     private ArrayList<Point2D> pool;
     private ShapeType currentShape;
     private int currentLimit, nVertices;
-    private final int NO_DRAW = -2, UNLIMITED = -1;
+    private final int LIM_NODRAW = -2, LIM_NOLIMIT = -1;
     private final String
-            strSolid = "Solid",
-            strDashed = "Dashed",
-            strDotted = "Dotted";
+            STR_SOLID = "Solid",
+            STR_DASHED = "Dashed",
+            STR_DOTTED = "Dotted";
 
     private ObservableList<Shape> shapes;
 
@@ -206,13 +206,13 @@ public class Controller {
 
     private int selectStyle() {
         switch (lineStyleCb.getValue()) {
-            case strSolid: {
+            case STR_SOLID: {
                 return 0;
             }
-            case strDashed: {
+            case STR_DASHED: {
                 return 1;
             }
-            case strDotted: {
+            case STR_DOTTED: {
                 return 2;
             }
         }
@@ -292,8 +292,8 @@ public class Controller {
     private void setInitialControls() {
         coordLabel.setText("");
         strokePicker.setValue(Color.BLACK);
-        lineStyleCb.getItems().addAll(strSolid, strDashed, strDotted);
-        lineStyleCb.setValue(strSolid);
+        lineStyleCb.getItems().addAll(STR_SOLID, STR_DASHED, STR_DOTTED);
+        lineStyleCb.setValue(STR_SOLID);
 
         int i = 0, c = shapeSelectionPane.getColumnCount();
         ToggleGroup gr = new ToggleGroup();
@@ -333,6 +333,7 @@ public class Controller {
                 currentShape = v;
                 currentLimit = v.getnPoints();
                 lineStyleCb.setDisable(!v.hasLineStyle());
+                fillPicker.setDisable(v.hasLineStyle());
                 if (v == ShapeType.REGPOLYGON) {
                     TextInputDialog dialog = createNVerticesDialog();
                     Optional<String> result = dialog.showAndWait();
@@ -340,7 +341,7 @@ public class Controller {
                         nVertices = Integer.valueOf(result.get());
                     else {
                         rb.setSelected(false);
-                        currentLimit = NO_DRAW;
+                        currentLimit = LIM_NODRAW;
                     }
                 }
             });
@@ -356,8 +357,13 @@ public class Controller {
         canvas.widthProperty().addListener(canvasSizeListener);
         canvas.heightProperty().addListener(canvasSizeListener);
 
+
         moveButton.getStyleClass().remove("check-box");
         moveButton.getStyleClass().add("toggle-button");
+        moveButton.selectedProperty().addListener((observable, oldValue, newValue)->{
+            if (newValue) canvas.setCursor(Cursor.MOVE);
+            else canvas.setCursor(Cursor.CROSSHAIR);
+        });
         shapesLv.getSelectionModel().selectedItemProperty().addListener(
                 (observable, oldValue, newValue)-> {
                     moveButton.setDisable(newValue == null);
@@ -367,7 +373,7 @@ public class Controller {
 
     private void setVariables() {
         pool = new ArrayList<>();
-        currentLimit = NO_DRAW;
+        currentLimit = LIM_NODRAW;
         shapes = shapesLv.getItems();
     }
 
@@ -405,12 +411,12 @@ public class Controller {
                 drawShapes();
                 return;
             }
-            if (currentLimit != NO_DRAW) {
+            if (currentLimit != LIM_NODRAW) {
                 if (event.getClickCount() == 1) {
                     pool.add(newPoint);
                     drawPoint(newPoint);
                 }
-                if (pool.size() == currentLimit || event.getClickCount() == 2 && currentLimit == UNLIMITED) {
+                if (pool.size() == currentLimit || event.getClickCount() == 2 && currentLimit == LIM_NOLIMIT) {
                     newShape();
                     pool.clear();
                     drawShapes();
@@ -432,7 +438,14 @@ public class Controller {
         ImageView iv = new ImageView(new Image(getClass().getResourceAsStream("res/icon_app.png")));
         iv.setPreserveRatio(true);
         iv.setFitHeight(64);
+        DropShadow shadow = new DropShadow();
+        shadow.setRadius(5);
+        shadow.setOffsetX(2);
+        shadow.setOffsetY(2);
+        shadow.setColor(Color.GRAY);
+        iv.setEffect(shadow);
         alert.setGraphic(iv);
+        alert.initOwner(canvas.getScene().getWindow());
         alert.showAndWait();
     }
 
