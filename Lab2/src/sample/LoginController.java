@@ -1,21 +1,63 @@
 package sample;
 
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.TextField;
+import javafx.stage.Stage;
 
-public class LoginController {
+import java.io.IOException;
+
+public class LoginController extends Controller {
     @FXML private TextField tfLogin;
     @FXML private TextField tfPassword;
 
+    private WindowController nextStage(String fxmlName, String title) {
+        WindowController wc = null;
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlName));
+            Parent root = loader.load();
+            wc = loader.getController();
+            Scene scene = new Scene(root);
+            Stage stage = new Stage();
+            stage.setScene(scene);
+            stage.setTitle(title);
+            wc.setStage(stage);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return wc;
+    }
+
+
     @FXML private void onSignIn() {
         String login = tfLogin.getText(), password = tfPassword.getText();
-        Alert alert = new Alert(Alert.AlertType.INFORMATION, "Result");
-        if (DatabaseManager.doesUserExist(login, password)) {
-            alert.setContentText("Success");
+        User user = new User(login, password);
+        if (DatabaseManager.doesUserExist(user)) {
+            getStage().hide();
+            String userType = DatabaseManager.getUserType(user);
+            WindowController wc;
+            switch (userType) {
+                case "student": {
+                    wc = nextStage("StudentWindow.fxml", "Student Window");
+                    break;
+                }
+                case "professor": {
+                    wc = nextStage("ProfessorWindow.fxml", "Professor Window");
+                    break;
+                }
+                default: return;
+            }
+            wc.setUser(user);
+            wc.init();
         } else {
-            alert.setContentText("Fail");
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Login error");
+            alert.setHeaderText("");
+            alert.setContentText("Incorrect login/password");
+            alert.showAndWait();
         }
-        alert.showAndWait();
     }
 }

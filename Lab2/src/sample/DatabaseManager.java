@@ -4,13 +4,16 @@ import java.sql.*;
 
 class DatabaseManager {
 
-    static boolean doesUserExist(String login, String password) {
-        String q =
+    private static final String dbUser = "root";
+    private static final String dbPassword = "universe";
+
+    static boolean doesUserExist(User user) {
+        String q = String.format(
                 "SELECT COUNT(*) FROM logins " +
-                "WHERE email = '" + login + "' AND password = '" + password + "';";
+                "WHERE email = '%s' AND password = '%s';",
+                user.getLogin(), user.getPassword());
         try {
-            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/lab2",
-                    "root","universe");
+            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/lab2", dbUser, dbPassword);
             Statement st = con.createStatement();
             ResultSet rs = st.executeQuery(q);
             rs.next();
@@ -25,5 +28,22 @@ class DatabaseManager {
         return false;
     }
 
-
+    static String getUserType(User user) {
+        String q = String.format(
+                "SELECT type FROM logins " +
+                        "WHERE email = '%s' AND password = '%s';",
+                user.getLogin(), user.getPassword());
+        try {
+            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/lab2", dbUser, dbPassword);
+            Statement st = con.createStatement();
+            ResultSet rs = st.executeQuery(q);
+            rs.next();
+            String type = rs.getString(1);
+            con.close();
+            return type;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return "none";
+    }
 }
