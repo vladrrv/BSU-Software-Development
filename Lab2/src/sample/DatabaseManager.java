@@ -1,49 +1,55 @@
 package sample;
 
+import java.math.BigInteger;
 import java.sql.*;
 
 class DatabaseManager {
 
+    private static final String dbURL = "jdbc:mysql://localhost:3306/lab2";
     private static final String dbUser = "root";
     private static final String dbPassword = "universe";
 
-    static boolean doesUserExist(User user) {
-        String q = String.format(
-                "SELECT COUNT(*) FROM logins " +
-                "WHERE email = '%s' AND password = '%s';",
-                user.getLogin(), user.getPassword());
+    private static <T> T query(String q) {
         try {
-            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/lab2", dbUser, dbPassword);
+            Connection con = DriverManager.getConnection(dbURL, dbUser, dbPassword);
             Statement st = con.createStatement();
             ResultSet rs = st.executeQuery(q);
             rs.next();
-            int count = rs.getInt(1);
-            //while(rs.next())
-            //    System.out.println(rs.getInt(1)+"  "+rs.getString(2)+"  "+rs.getString(3));
+            T result = (T)rs.getObject(1);
             con.close();
-            return count > 0;
+            return result;
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return false;
+        return null;
     }
 
-    static String getUserType(User user) {
+    static long getLoginId(String email, String password) {
+        String q = String.format(
+                "SELECT id FROM logins " +
+                "WHERE email = '%s' AND password = '%s';",
+                email, password);
+        BigInteger id = query(q);
+        return id == null ? -1 : id.longValue();
+    }
+
+    static User.UserType getUserType(User user) {
         String q = String.format(
                 "SELECT type FROM logins " +
-                        "WHERE email = '%s' AND password = '%s';",
-                user.getLogin(), user.getPassword());
-        try {
-            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/lab2", dbUser, dbPassword);
-            Statement st = con.createStatement();
-            ResultSet rs = st.executeQuery(q);
-            rs.next();
-            String type = rs.getString(1);
-            con.close();
-            return type;
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return "none";
+                "WHERE id = '%s';",
+                user.getLoginId());
+        String type = query(q);
+        return (type == null)? User.UserType.UNDEFINED :
+                User.UserType.valueOf(type.toUpperCase());
+    }
+
+    static String getUserName(User user) {
+        String tableName = user.getType().name().toLowerCase() + 's';
+        String q = String.format(
+                "SELECT name FROM %s " +
+                "WHERE login_id = '%s';",
+                tableName, user.getLoginId());
+        String name = query(q);
+        return (name == null)? "none" : name;
     }
 }

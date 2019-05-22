@@ -38,7 +38,7 @@ public class Main extends Application {
 
 
     public static void main(String[] args) {
-        System.setProperty("javafx.preloader", MyPreloader.class.getCanonicalName());
+        //System.setProperty("javafx.preloader", MyPreloader.class.getCanonicalName());
         launch(args);
     }
 }

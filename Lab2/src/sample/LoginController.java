@@ -34,17 +34,21 @@ public class LoginController extends Controller {
 
     @FXML private void onSignIn() {
         String login = tfLogin.getText(), password = tfPassword.getText();
-        User user = new User(login, password);
-        if (DatabaseManager.doesUserExist(user)) {
+        long userId = DatabaseManager.getLoginId(login, password);
+        if (userId > 0) {
+            User user = new User(userId);
             getStage().hide();
-            String userType = DatabaseManager.getUserType(user);
+            User.UserType userType = DatabaseManager.getUserType(user);
+            user.setType(userType);
+            String userName = DatabaseManager.getUserName(user);
+            user.setName(userName);
             WindowController wc;
             switch (userType) {
-                case "student": {
+                case STUDENT: {
                     wc = nextStage("StudentWindow.fxml", "Student Window");
                     break;
                 }
-                case "professor": {
+                case PROFESSOR: {
                     wc = nextStage("ProfessorWindow.fxml", "Professor Window");
                     break;
                 }
