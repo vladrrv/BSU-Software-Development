@@ -52,6 +52,10 @@ public class LoginController extends Controller {
                     wc = nextStage("ProfessorWindow.fxml", "Professor Window");
                     break;
                 }
+                case REGISTRAR: {
+                    wc = nextStage("RegistrarWindow.fxml", "Registrar Window");
+                    break;
+                }
                 default: return;
             }
             wc.setUser(user);

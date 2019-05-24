@@ -15,7 +15,8 @@ class Controller {
 
     void init() {
         stage.show();
-        stage.setMinHeight(stage.getHeight());
-        stage.setMinWidth(stage.getWidth());
+        stage.setResizable(false);
+        //stage.setMinHeight(stage.getHeight());
+        //stage.setMinWidth(stage.getWidth());
     }
 }

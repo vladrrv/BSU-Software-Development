@@ -10,18 +10,19 @@ class DatabaseManager {
     private static final String dbPassword = "universe";
 
     private static <T> T query(String q) {
+        T result = null;
         try {
             Connection con = DriverManager.getConnection(dbURL, dbUser, dbPassword);
             Statement st = con.createStatement();
             ResultSet rs = st.executeQuery(q);
-            rs.next();
-            T result = (T)rs.getObject(1);
+            if (rs.next()) {
+                result = (T) rs.getObject(1);
+            }
             con.close();
-            return result;
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return null;
+        return result;
     }
 
     static long getLoginId(String email, String password) {

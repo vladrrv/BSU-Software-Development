@@ -3,10 +3,10 @@ package sample;
 class User {
 
     enum UserType {
-        STUDENT ("student"),
-        PROFESSOR ("professor"),
-        UNDEFINED("none");
-        UserType(String s) { }
+        STUDENT,
+        PROFESSOR,
+        REGISTRAR,
+        UNDEFINED
     }
 
     private long loginId;
