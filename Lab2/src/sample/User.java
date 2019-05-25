@@ -11,6 +11,7 @@ class User {
 
     private long loginId;
     private String name;
+    private String info;
     private UserType type;
 
     User(long loginId) {
@@ -35,5 +36,13 @@ class User {
 
     void setName(String name) {
         this.name = name;
+    }
+
+    public String getInfo() {
+        return info;
+    }
+
+    public void setInfo(String info) {
+        this.info = info;
     }
 }

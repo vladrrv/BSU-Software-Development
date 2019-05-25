@@ -6,15 +6,25 @@ import javafx.scene.control.Label;
 
 public class StudentWindowController extends WindowController {
 
-    @FXML private Label labelCourse;
-    @FXML private Label labelGroup;
+    private long studentId;
+
     @FXML private Button buttonRegister;
     @FXML private Button buttonViewGrades;
 
     @Override
     void init() {
         super.init();
+        boolean isRegOpen = DatabaseManager.isRegistrationOpen();
+        buttonRegister.setDisable(!isRegOpen);
+        buttonViewGrades.setDisable(isRegOpen);
+        studentId = DatabaseManager.getStudentId(getUser());
     }
 
+    @FXML private void onRegister() {
+        RegisterForCoursesController c =
+                (RegisterForCoursesController) nextStage("RegisterForCoursesForm.fxml", "Register for Courses");
+        c.setParentStage(getStage());
+        c.init(studentId);
+    }
 
 }

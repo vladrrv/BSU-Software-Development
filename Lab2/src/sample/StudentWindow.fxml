@@ -9,7 +9,7 @@
 
 <AnchorPane prefHeight="300.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.StudentWindowController">
    <children>
-      <Button fx:id="buttonRegister" layoutX="15.0" layoutY="182.0" mnemonicParsing="false" text="Register for Courses" />
+      <Button fx:id="buttonRegister" layoutX="15.0" layoutY="182.0" mnemonicParsing="false" onAction="#onRegister" text="Register for Courses" />
       <HBox layoutX="15.0" layoutY="14.0" prefHeight="150.0" prefWidth="370.0" style="-fx-border-width: 1px; -fx-border-color: gray;">
          <children>
             <ImageView fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true" />
@@ -20,8 +20,7 @@
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label fx:id="labelCourse" layoutX="11.0" layoutY="34.0" text="Course" />
-                  <Label fx:id="labelGroup" layoutX="11.0" layoutY="52.0" text="Group" />
+                  <Label fx:id="labelInfo" layoutX="11.0" layoutY="34.0" text="Info" />
                </children>
             </AnchorPane>
          </children>

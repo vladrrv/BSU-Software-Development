@@ -31,8 +31,7 @@ public class Main extends Application {
         loginController.setStage(loginStage);
         loginStage.setScene(sceneLogin);
         loginStage.setTitle("Login");
-        loginStage.show();
-        loginStage.setResizable(false);
+        loginController.init();
         //primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("res/icon_app.png")));
     }
 

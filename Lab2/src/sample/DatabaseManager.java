@@ -1,5 +1,10 @@
 package sample;
 
+import com.sun.javafx.collections.ObservableListWrapper;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableArray;
+import javafx.collections.ObservableList;
+
 import java.math.BigInteger;
 import java.sql.*;
 
@@ -34,23 +39,60 @@ class DatabaseManager {
         return id == null ? -1 : id.longValue();
     }
 
-    static User.UserType getUserType(User user) {
+    static void setUserFields(User user) {
+
+        // Get user type
         String q = String.format(
                 "SELECT type FROM logins " +
                 "WHERE id = '%s';",
                 user.getLoginId());
         String type = query(q);
-        return (type == null)? User.UserType.UNDEFINED :
+        User.UserType t = (type == null)? User.UserType.UNDEFINED :
                 User.UserType.valueOf(type.toUpperCase());
-    }
+        user.setType(t);
 
-    static String getUserName(User user) {
-        String tableName = user.getType().name().toLowerCase() + 's';
-        String q = String.format(
+        // Get user name
+        String tableName = type + 's';
+        q = String.format(
                 "SELECT name FROM %s " +
                 "WHERE login_id = '%s';",
                 tableName, user.getLoginId());
         String name = query(q);
-        return (name == null)? "none" : name;
+        user.setName(name);
+
+        // Get user info
+
+    }
+
+    static boolean isRegistrationOpen() {
+        String q = "SELECT is_open FROM state;";
+        // TODO: query if reg is open
+        return true;
+    }
+
+    static long getStudentId(User user) {
+        String q = String.format(
+                "SELECT id FROM students " +
+                "WHERE login_id = '%s';",
+                user.getLoginId());
+        BigInteger res = query(q);
+        return res.longValue();
+    }
+
+    static ObservableList<CourseOffering> getOfferings(long studentId) {
+
+        // TODO: query to get list of all course offerings
+        String q = String.format(
+                "SELECT id FROM course_offerings JOIN  " +
+                "WHERE id = '%s';",
+                studentId);
+
+        var l = FXCollections.observableArrayList(
+                new CourseOffering( "c1"    , "x", false, false  ),
+                new CourseOffering( "c2"    , "x", true, false  ),
+                new CourseOffering( "c3"    , "y", false, true  )
+        );
+
+        return l;
     }
 }
