@@ -21,7 +21,7 @@
             </TableView>
          </content>
       </TitledPane>
-      <Button layoutX="449.0" layoutY="360.0" mnemonicParsing="false" onAction="#onApply" prefHeight="26.0" prefWidth="59.0" text="Apply" />
-      <Button layoutX="511.0" layoutY="360.0" mnemonicParsing="false" onAction="#onCancel" prefHeight="26.0" prefWidth="59.0" text="Cancel" />
+      <Button defaultButton="true" layoutX="449.0" layoutY="360.0" mnemonicParsing="false" onAction="#onApply" prefHeight="26.0" prefWidth="59.0" text="Apply" />
+      <Button cancelButton="true" layoutX="511.0" layoutY="360.0" mnemonicParsing="false" onAction="#onCancel" prefHeight="26.0" prefWidth="59.0" text="Cancel" />
    </children>
 </AnchorPane>

@@ -19,7 +19,7 @@ public class MyPreloader extends Preloader {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("PreloaderForm.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("forms/PreloaderForm.fxml"));
         Parent root = loader.load();
         PreloaderController controller = loader.getController();
         progress = controller.getProgress();

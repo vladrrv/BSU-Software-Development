@@ -1,5 +1,6 @@
 package sample;
 
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.CheckBoxTableCell;
@@ -8,22 +9,25 @@ import javafx.stage.Stage;
 
 public class RegisterForCoursesController extends Controller {
 
-    private long studentId;
+    private ObservableList<CourseOffering> offeringsList;
 
     @FXML private TableView<CourseOffering> tableView;
 
     void init(long studentId) {
-        this.studentId = studentId;
-
         var cols = tableView.getColumns();
-        cols.get(0).setCellValueFactory(new PropertyValueFactory<>("course"));
-        cols.get(1).setCellValueFactory(new PropertyValueFactory<>("teacher"));
-        cols.get(2).setCellValueFactory(new PropertyValueFactory<>("primary"));
-        cols.get(2).setCellFactory(tc -> new CheckBoxTableCell<>());
-        cols.get(3).setCellValueFactory(new PropertyValueFactory<>("alternate"));
-        cols.get(3).setCellFactory(tc -> new CheckBoxTableCell<>());
+        var courseCol = cols.get(0);
+        var techerCol = cols.get(1);
+        var primaryCol = cols.get(2);
+        var alternateCol = cols.get(3);
+        courseCol.setCellValueFactory(new PropertyValueFactory<>("course"));
+        techerCol.setCellValueFactory(new PropertyValueFactory<>("teacher"));
+        primaryCol.setCellValueFactory(new PropertyValueFactory<>("primary"));
+        primaryCol.setCellFactory(tc -> new CheckBoxTableCell<>());
+        alternateCol.setCellValueFactory(new PropertyValueFactory<>("alternate"));
+        alternateCol.setCellFactory(tc -> new CheckBoxTableCell<>());
 
-        tableView.setItems(DatabaseManager.getOfferings(studentId));
+        offeringsList = DatabaseManager.getOfferings(studentId);
+        tableView.setItems(offeringsList);
 
         Stage stage = getStage();
         stage.setResizable(false);
@@ -31,9 +35,8 @@ public class RegisterForCoursesController extends Controller {
     }
 
     @FXML private void onApply() {
-        var offerings = tableView.getItems();
         int countAlternate = 0, countPrimary = 0;
-        for (var offering : offerings) {
+        for (var offering : offeringsList) {
             countPrimary += offering.isPrimary()? 1: 0;
             countAlternate += offering.isAlternate()? 1: 0;
         }

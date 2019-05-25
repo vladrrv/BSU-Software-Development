@@ -67,7 +67,7 @@ class DatabaseManager {
     static boolean isRegistrationOpen() {
         String q = "SELECT is_open FROM state;";
         // TODO: query if reg is open
-        return true;
+        return false;
     }
 
     static long getStudentId(User user) {
@@ -88,9 +88,26 @@ class DatabaseManager {
                 studentId);
 
         var l = FXCollections.observableArrayList(
-                new CourseOffering( "c1"    , "x", false, false  ),
-                new CourseOffering( "c2"    , "x", true, false  ),
-                new CourseOffering( "c3"    , "y", false, true  )
+                new CourseOffering("c1", "x", false, false),
+                new CourseOffering("c2", "x", true, false),
+                new CourseOffering("c3", "y", false, true)
+        );
+
+        return l;
+    }
+
+    static ObservableList<Grade> getGrades(long studentId) {
+
+        // TODO: query to get list of student's grades
+        String q = String.format(
+                "SELECT id FROM course_offerings JOIN  " +
+                        "WHERE id = '%s';",
+                studentId);
+
+        var l = FXCollections.observableArrayList(
+                new Grade( "c1", 10),
+                new Grade( "c2", 10),
+                new Grade( "c3", 9)
         );
 
         return l;

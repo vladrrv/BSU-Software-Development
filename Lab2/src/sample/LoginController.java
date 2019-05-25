@@ -18,15 +18,15 @@ public class LoginController extends Controller {
             WindowController wc;
             switch (user.getType()) {
                 case STUDENT: {
-                    wc = (WindowController) nextStage("StudentWindow.fxml", "Student Window");
+                    wc = (WindowController) nextStage("forms/StudentWindow.fxml", "Student Window");
                     break;
                 }
                 case PROFESSOR: {
-                    wc = (WindowController) nextStage("ProfessorWindow.fxml", "Professor Window");
+                    wc = (WindowController) nextStage("forms/ProfessorWindow.fxml", "Professor Window");
                     break;
                 }
                 case REGISTRAR: {
-                    wc = (WindowController) nextStage("RegistrarWindow.fxml", "Registrar Window");
+                    wc = (WindowController) nextStage("forms/RegistrarWindow.fxml", "Registrar Window");
                     break;
                 }
                 default: return;

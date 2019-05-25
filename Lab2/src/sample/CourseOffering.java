@@ -16,6 +16,17 @@ public class CourseOffering {
         this.teacher.set(teacher);
         this.primary.set(primary);
         this.alternate.set(alternate);
+
+        this.primary.addListener(c -> {
+            if (isPrimary() && isAlternate()) {
+                alternateProperty().set(false);
+            }
+        });
+        this.alternate.addListener(c -> {
+            if (isPrimary() && isAlternate()) {
+                primaryProperty().set(false);
+            }
+        });
     }
 
     public String getCourse() {

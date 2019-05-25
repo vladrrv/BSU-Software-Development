@@ -5,10 +5,7 @@ import javafx.application.Preloader;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.image.Image;
-import javafx.scene.paint.Color;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 
 public class Main extends Application {
 
@@ -23,7 +20,7 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("LoginForm.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("forms/LoginForm.fxml"));
         Parent rootLogin = loader.load();
         Scene sceneLogin = new Scene(rootLogin);
         LoginController loginController = loader.getController();
