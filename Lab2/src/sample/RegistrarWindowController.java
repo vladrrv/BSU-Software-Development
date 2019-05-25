@@ -6,12 +6,24 @@ import javafx.scene.control.Label;
 
 public class RegistrarWindowController extends WindowController {
 
-    @FXML private Button buttonCloseRegistration;
+    @FXML private Button buttonSwitchRegistration;
+
+    private void switchButtonLabel() {
+        if (DatabaseManager.isRegistrationOpen()) {
+            buttonSwitchRegistration.setText("Close Registration");
+        } else {
+            buttonSwitchRegistration.setText("Open Registration");
+        }
+    }
 
     @Override
     void init() {
         super.init();
+        switchButtonLabel();
     }
 
-
+    @FXML private void onSwitchRegistration() {
+        DatabaseManager.switchRegistration();
+        switchButtonLabel();
+    }
 }

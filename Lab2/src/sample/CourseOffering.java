@@ -6,12 +6,14 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
 public class CourseOffering {
+    private long offeringId;
     private StringProperty course = new SimpleStringProperty();
     private StringProperty teacher = new SimpleStringProperty();
     private BooleanProperty primary = new SimpleBooleanProperty();
     private BooleanProperty alternate = new SimpleBooleanProperty();
 
-    public CourseOffering(String course, String teacher, Boolean primary, Boolean alternate) {
+    CourseOffering(long offeringId, String course, String teacher, Boolean primary, Boolean alternate) {
+        this.offeringId = offeringId;
         this.course.set(course);
         this.teacher.set(teacher);
         this.primary.set(primary);
@@ -59,5 +61,9 @@ public class CourseOffering {
 
     public BooleanProperty alternateProperty() {
         return alternate;
+    }
+
+    public long getOfferingId() {
+        return offeringId;
     }
 }

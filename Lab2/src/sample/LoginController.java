@@ -1,11 +1,12 @@
 package sample;
 
 import javafx.fxml.FXML;
+import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 
 public class LoginController extends Controller {
     @FXML private TextField tfLogin;
-    @FXML private TextField tfPassword;
+    @FXML private PasswordField tfPassword;
 
 
     @FXML private void onSignIn() {
@@ -25,7 +26,7 @@ public class LoginController extends Controller {
                     wc = (WindowController) nextStage("forms/ProfessorWindow.fxml", "Professor Window");
                     break;
                 }
-                case REGISTRAR: {
+                case ADMIN: {
                     wc = (WindowController) nextStage("forms/RegistrarWindow.fxml", "Registrar Window");
                     break;
                 }

@@ -5,7 +5,7 @@ class User {
     enum UserType {
         STUDENT,
         PROFESSOR,
-        REGISTRAR,
+        ADMIN,
         UNDEFINED
     }
 

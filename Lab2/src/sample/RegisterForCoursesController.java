@@ -9,11 +9,16 @@ import javafx.stage.Stage;
 
 public class RegisterForCoursesController extends Controller {
 
+    private final int primaryLimit = 1;
+    private final int alternateLimit = 1;
+
+    private long studentId;
     private ObservableList<CourseOffering> offeringsList;
 
     @FXML private TableView<CourseOffering> tableView;
 
     void init(long studentId) {
+        this.studentId = studentId;
         var cols = tableView.getColumns();
         var courseCol = cols.get(0);
         var techerCol = cols.get(1);
@@ -40,11 +45,13 @@ public class RegisterForCoursesController extends Controller {
             countPrimary += offering.isPrimary()? 1: 0;
             countAlternate += offering.isAlternate()? 1: 0;
         }
-        if (countPrimary == 4 && countAlternate == 2) {
+        if (countPrimary == primaryLimit && countAlternate == alternateLimit) {
             getStage().close();
-            // TODO: update database according to selection
+            DatabaseManager.updateStudentOfferings(studentId, offeringsList);
         } else {
-            showError("You must select 4 primary and 2 alternate courses.");
+            showError(String.format(
+                    "You must select %d primary and %d alternate courses.",
+                    primaryLimit, alternateLimit));
         }
     }
     @FXML private void onCancel() {
