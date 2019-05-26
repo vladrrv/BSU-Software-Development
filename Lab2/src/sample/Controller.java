@@ -1,6 +1,13 @@
 package sample;
 
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
+
+import java.io.IOException;
 
 class Controller {
     private Stage stage;
@@ -13,9 +20,41 @@ class Controller {
         this.stage = stage;
     }
 
+    void showError(String errorMessage) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Error");
+        alert.setHeaderText("");
+        alert.setContentText(errorMessage);
+        alert.showAndWait();
+    }
+
+    Controller nextStage(String fxmlName, String title) {
+        Controller c = null;
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlName));
+            Parent root = loader.load();
+            c = loader.getController();
+            Scene scene = new Scene(root);
+            Stage stage = new Stage();
+            stage.setScene(scene);
+            stage.setTitle(title);
+            c.setStage(stage);
+        } catch (IOException e) {
+            e.printStackTrace();
+            showError(e.getMessage());
+        }
+        return c;
+    }
+
     void init() {
         stage.show();
-        stage.setMinHeight(stage.getHeight());
-        stage.setMinWidth(stage.getWidth());
+        stage.setResizable(false);
+        //stage.setMinHeight(stage.getHeight());
+        //stage.setMinWidth(stage.getWidth());
+    }
+
+    void setParentStage(Stage parentStage) {
+        stage.initOwner(parentStage);
+        stage.initModality(Modality.APPLICATION_MODAL);
     }
 }

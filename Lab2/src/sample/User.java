@@ -3,14 +3,15 @@ package sample;
 class User {
 
     enum UserType {
-        STUDENT ("student"),
-        PROFESSOR ("professor"),
-        UNDEFINED("none");
-        UserType(String s) { }
+        STUDENT,
+        PROFESSOR,
+        ADMIN,
+        UNDEFINED
     }
 
     private long loginId;
     private String name;
+    private String info;
     private UserType type;
 
     User(long loginId) {
@@ -35,5 +36,18 @@ class User {
 
     void setName(String name) {
         this.name = name;
+    }
+
+    public String getInfo() {
+        return info;
+    }
+
+    public void setInfo(String info) {
+        this.info = info;
+    }
+
+    @Override
+    public String toString() {
+        return name;
     }
 }

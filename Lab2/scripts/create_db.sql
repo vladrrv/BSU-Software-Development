@@ -4,7 +4,7 @@
 -- https://tableplus.com/
 --
 -- Database: course_catalogue_db
--- Generation Time: 2019-05-01 13:52:43.7960
+-- Generation Time: 2019-05-25 19:34:50.8490
 -- -------------------------------------------------------------
 
 
@@ -20,6 +20,26 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 
+DROP TABLE IF EXISTS `admins`;
+CREATE TABLE `admins` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `login_id` bigint(20) unsigned DEFAULT NULL,
+  `name` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id` (`id`),
+  KEY `login_id` (`login_id`),
+  CONSTRAINT `admins_ibfk_1` FOREIGN KEY (`login_id`) REFERENCES `logins` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+DROP TABLE IF EXISTS `config`;
+CREATE TABLE `config` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `is_registration_open` tinyint(1) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+DROP TABLE IF EXISTS `course_offerings`;
 CREATE TABLE `course_offerings` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `professor_id` bigint(20) unsigned DEFAULT NULL,
@@ -30,8 +50,9 @@ CREATE TABLE `course_offerings` (
   KEY `courseId` (`course_id`),
   CONSTRAINT `course_offerings_ibfk_1` FOREIGN KEY (`professor_id`) REFERENCES `professors` (`id`),
   CONSTRAINT `course_offerings_ibfk_2` FOREIGN KEY (`course_id`) REFERENCES `courses` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+DROP TABLE IF EXISTS `courses`;
 CREATE TABLE `courses` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `description` varchar(255) DEFAULT NULL,
@@ -40,29 +61,32 @@ CREATE TABLE `courses` (
   UNIQUE KEY `id` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=104 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+DROP TABLE IF EXISTS `grades`;
 CREATE TABLE `grades` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `course_offering_id` bigint(20) unsigned DEFAULT NULL,
+  `roster_id` bigint(20) unsigned DEFAULT NULL,
   `student_id` bigint(20) unsigned DEFAULT NULL,
   `grade` int(10) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id` (`id`),
-  KEY `courseOfferingId` (`course_offering_id`),
   KEY `studentId` (`student_id`),
-  CONSTRAINT `grades_ibfk_1` FOREIGN KEY (`course_offering_id`) REFERENCES `course_offerings` (`id`),
-  CONSTRAINT `grades_ibfk_2` FOREIGN KEY (`student_id`) REFERENCES `students` (`id`)
+  KEY `roster_id` (`roster_id`),
+  CONSTRAINT `grades_ibfk_2` FOREIGN KEY (`student_id`) REFERENCES `students` (`id`),
+  CONSTRAINT `grades_ibfk_3` FOREIGN KEY (`roster_id`) REFERENCES `rosters` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1003 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+DROP TABLE IF EXISTS `logins`;
 CREATE TABLE `logins` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `email` varchar(255) NOT NULL,
-  `type` enum('professor','student') NOT NULL,
+  `type` enum('professor','student','admin') NOT NULL,
   `password` varchar(255) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id` (`id`),
   UNIQUE KEY `email` (`email`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+DROP TABLE IF EXISTS `professors`;
 CREATE TABLE `professors` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `login_id` bigint(20) unsigned NOT NULL,
@@ -71,8 +95,33 @@ CREATE TABLE `professors` (
   UNIQUE KEY `id` (`id`),
   KEY `loginId` (`login_id`),
   CONSTRAINT `professors_ibfk_1` FOREIGN KEY (`login_id`) REFERENCES `logins` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+DROP TABLE IF EXISTS `rosters`;
+CREATE TABLE `rosters` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `course_offering_id` bigint(20) unsigned DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id` (`id`),
+  KEY `course_offering_id` (`course_offering_id`),
+  CONSTRAINT `rosters_ibfk_1` FOREIGN KEY (`course_offering_id`) REFERENCES `course_offerings` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+DROP TABLE IF EXISTS `student_course_offerings`;
+CREATE TABLE `student_course_offerings` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `student_id` bigint(20) unsigned DEFAULT NULL,
+  `course_offering_id` bigint(20) unsigned DEFAULT NULL,
+  `is_alt` tinyint(1) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id` (`id`),
+  KEY `student_id` (`student_id`),
+  KEY `course_offering_id` (`course_offering_id`),
+  CONSTRAINT `student_course_offerings_ibfk_1` FOREIGN KEY (`student_id`) REFERENCES `students` (`id`),
+  CONSTRAINT `student_course_offerings_ibfk_2` FOREIGN KEY (`course_offering_id`) REFERENCES `course_offerings` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+DROP TABLE IF EXISTS `students`;
 CREATE TABLE `students` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `login_id` bigint(20) unsigned DEFAULT NULL,
@@ -83,23 +132,40 @@ CREATE TABLE `students` (
   CONSTRAINT `students_ibfk_1` FOREIGN KEY (`login_id`) REFERENCES `logins` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-INSERT INTO `course_offerings` (`id`, `professor_id`, `course_id`) VALUES ('10', '1', '103');
+INSERT INTO `admins` (`id`, `login_id`, `name`) VALUES ('1', '5', 'John Doe');
+
+INSERT INTO `config` (`id`, `is_registration_open`) VALUES ('1', '0');
+
+INSERT INTO `course_offerings` (`id`, `professor_id`, `course_id`) VALUES ('10', '1', '103'),
+('11', '2', '100');
 
 INSERT INTO `courses` (`id`, `description`, `price`) VALUES ('100', 'HTML course for beginners', '20'),
 ('101', 'CSS course for beginners', '20'),
 ('102', 'Advanced calculus', '40'),
 ('103', 'Programming Technologies', '0');
 
-INSERT INTO `grades` (`id`, `course_offering_id`, `student_id`, `grade`) VALUES ('1000', '10', '1', '10'),
+INSERT INTO `grades` (`id`, `roster_id`, `student_id`, `grade`) VALUES ('1000', '10', '1', '10'),
 ('1001', '10', '2', '10'),
 ('1002', '10', '3', '10');
 
 INSERT INTO `logins` (`id`, `email`, `type`, `password`) VALUES ('1', 'drobushevich@bsu.by', X'70726f666573736f72', '123123'),
 ('2', 'kalugin@bsu.by', X'73747564656e74', '123123'),
 ('3', 'reentovich@bsu.by', X'73747564656e74', '123123'),
-('4', 'polochanina', X'73747564656e74', '123123');
+('4', 'polochanina@bsu.by', X'73747564656e74', '123123'),
+('5', 'john.doe@bsu.by', X'61646d696e', '123123'),
+('6', 'mikhail.skipskiy@bsu.by', X'70726f666573736f72', '123123');
 
-INSERT INTO `professors` (`id`, `login_id`, `name`) VALUES ('1', '1', 'Drobushevich Lubov Fedorovna');
+INSERT INTO `professors` (`id`, `login_id`, `name`) VALUES ('1', '1', 'Drobushevich Lubov Fedorovna'),
+('2', '6', 'Skipskiy Mikhail Semenovich');
+
+INSERT INTO `rosters` (`id`, `course_offering_id`) VALUES ('10', '10'),
+('11', '11');
+
+INSERT INTO `student_course_offerings` (`id`, `student_id`, `course_offering_id`, `is_alt`) VALUES ('1', '1', '10', '0'),
+('2', '2', '10', '1'),
+('3', '3', '10', '0'),
+('4', '1', '11', '1'),
+('5', '2', '11', '1');
 
 INSERT INTO `students` (`id`, `login_id`, `name`) VALUES ('1', '2', 'Pavel Kalugin'),
 ('2', '3', 'Vladislav Reentovich'),

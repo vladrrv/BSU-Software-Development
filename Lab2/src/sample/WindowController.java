@@ -6,6 +6,7 @@ import javafx.scene.control.Label;
 class WindowController extends Controller {
     private User user;
     @FXML protected Label labelName;
+    @FXML protected Label labelInfo;
 
     User getUser() {
         return user;
