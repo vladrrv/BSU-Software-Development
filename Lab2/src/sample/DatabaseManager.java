@@ -87,6 +87,15 @@ class DatabaseManager {
     static long getStudentId(User user) {
         String q = String.format(
                 "SELECT id FROM students " +
+                        "WHERE login_id = '%s';",
+                user.getLoginId());
+        BigInteger res = query(q);
+        return res.longValue();
+    }
+
+    static long getProfessorId(User user) {
+        String q = String.format(
+                "SELECT id FROM professors " +
                 "WHERE login_id = '%s';",
                 user.getLoginId());
         BigInteger res = query(q);
@@ -156,6 +165,10 @@ class DatabaseManager {
         }
     }
 
+    static void updateCourseOfferings(long professorId, ObservableList<Course> courses) {
+        // TODO: update course offerings according to selection
+    }
+
     static ObservableList<Grade> getGrades(long studentId) {
 
         String q = String.format(
@@ -183,6 +196,38 @@ class DatabaseManager {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
+        return l;
+    }
+
+
+    static ObservableList<Course> getCourses(long professorId) {
+
+        String q = String.format(
+                "%d",
+                professorId);
+
+        ObservableList<Course> l = FXCollections.observableArrayList(
+                new Course(1,"xxx", true),
+                new Course(2,"yyy", false)
+        );
+
+        /*
+        try {
+            Connection con = DriverManager.getConnection(dbURL, dbUser, dbPassword);
+            Statement st = con.createStatement();
+            ResultSet rs = st.executeQuery(q);
+            while (rs.next()) {
+                long courseId = ((BigInteger) rs.getObject(1)).longValue();
+                String course = (String) rs.getObject(2);
+                Boolean selected = (Boolean) rs.getObject(3);
+                l.add(new Course(courseId, course, selected));
+            }
+            con.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        */
 
         return l;
     }
