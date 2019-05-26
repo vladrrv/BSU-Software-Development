@@ -143,32 +143,6 @@ class DatabaseManager {
         return new Random().nextInt(9999999);
     }
 
-    static void updateStudentOfferings(long studentId, ObservableList<CourseOffering> offerings) {
-
-        String q = "delete from student_course_offerings where student_id = 1;";
-
-        try {
-            Connection con = DriverManager.getConnection(dbURL, dbUser, dbPassword);
-            Statement st = con.createStatement();
-            st.execute(q);
-            for (var offering : offerings) {
-                long offeringId = offering.getOfferingId();
-                boolean isAlt = offering.isAlternate();
-                if (offering.isPrimary() || isAlt) {
-                    q = String.format("INSERT INTO student_course_offerings VALUES (%d, %d, %d, %b)", getRandId(), studentId, offeringId, isAlt);
-                    st.execute(q);
-                }
-            }
-            con.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    static void updateCourseOfferings(long professorId, ObservableList<Course> courses) {
-        // TODO: update course offerings according to selection
-    }
-
     static ObservableList<Grade> getGrades(long studentId) {
 
         String q = String.format(
@@ -200,19 +174,22 @@ class DatabaseManager {
         return l;
     }
 
-
     static ObservableList<Course> getCourses(long professorId) {
-
         String q = String.format(
-                "%d",
+                "with co_by_professor_id as (" +
+                "    select * from course_offerings where professor_id = %d) " +
+                "select c.id, c.description course_description, professor_id " +
+                "from courses c " +
+                "         join co_by_professor_id co ON co.course_id = c.id " +
+                "UNION " +
+                "select c.id, c.description course_description, professor_id " +
+                "from courses c " +
+                "         left join course_offerings co ON co.course_id = c.id " +
+                "where professor_id IS NULL;",
                 professorId);
 
-        ObservableList<Course> l = FXCollections.observableArrayList(
-                new Course(1,"xxx", true),
-                new Course(2,"yyy", false)
-        );
+        ObservableList<Course> l = FXCollections.observableArrayList();
 
-        /*
         try {
             Connection con = DriverManager.getConnection(dbURL, dbUser, dbPassword);
             Statement st = con.createStatement();
@@ -220,15 +197,41 @@ class DatabaseManager {
             while (rs.next()) {
                 long courseId = ((BigInteger) rs.getObject(1)).longValue();
                 String course = (String) rs.getObject(2);
-                Boolean selected = (Boolean) rs.getObject(3);
+                BigInteger profId = (BigInteger) rs.getObject(3);
+                boolean selected = profId != null;
                 l.add(new Course(courseId, course, selected));
             }
             con.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        */
 
         return l;
+    }
+
+    static void updateStudentOfferings(long studentId, ObservableList<CourseOffering> offerings) {
+
+        String q = "delete from student_course_offerings where student_id = 1;";
+
+        try {
+            Connection con = DriverManager.getConnection(dbURL, dbUser, dbPassword);
+            Statement st = con.createStatement();
+            st.execute(q);
+            for (var offering : offerings) {
+                long offeringId = offering.getOfferingId();
+                boolean isAlt = offering.isAlternate();
+                if (offering.isPrimary() || isAlt) {
+                    q = String.format("INSERT INTO student_course_offerings VALUES (%d, %d, %d, %b)", getRandId(), studentId, offeringId, isAlt);
+                    st.execute(q);
+                }
+            }
+            con.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    static void updateCourseOfferings(long professorId, ObservableList<Course> courses) {
+        // TODO: update course offerings according to selection
     }
 }
