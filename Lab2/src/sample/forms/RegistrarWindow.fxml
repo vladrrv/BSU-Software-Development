@@ -32,7 +32,7 @@
                            <center>
                               <TitledPane collapsible="false" prefHeight="200.0" prefWidth="168.0" text="Professors" BorderPane.alignment="CENTER">
                                  <content>
-                                    <ListView prefHeight="200.0" prefWidth="200.0" />
+                                    <ListView fx:id="listViewProfessors" prefHeight="200.0" prefWidth="200.0" />
                                  </content>
                               </TitledPane>
                            </center>
@@ -73,7 +73,7 @@
                            <center>
                               <TitledPane collapsible="false" prefHeight="200.0" prefWidth="168.0" text="Students" BorderPane.alignment="CENTER">
                                  <content>
-                                    <ListView prefHeight="200.0" prefWidth="200.0" />
+                                    <ListView fx:id="listViewStudents" prefHeight="200.0" prefWidth="200.0" />
                                  </content>
                               </TitledPane>
                            </center>
