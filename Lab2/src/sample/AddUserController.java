@@ -1,9 +1,12 @@
 package sample;
 
-public class AddUserController extends Controller {
+import javafx.stage.Stage;
+
+public class AddUserController extends ModalController {
 
     @Override
-    void init() {
-        super.init();
+    void init(Stage parentStage) {
+
+        super.init(parentStage);
     }
 }

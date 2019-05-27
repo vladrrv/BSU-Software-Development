@@ -6,12 +6,12 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 
-public class ViewGradesController extends Controller {
+public class ViewGradesController extends ModalController {
 
     private ObservableList<Grade> gradesList;
     @FXML private TableView<Grade> tableView;
 
-    void init(long studentId) {
+    void init(Stage parentStage, long studentId) {
         var cols = tableView.getColumns();
         var courseCol = cols.get(0);
         var gradeCol = cols.get(1);
@@ -21,9 +21,7 @@ public class ViewGradesController extends Controller {
         gradesList = DatabaseManager.getGradesForStudent(studentId);
         tableView.setItems(gradesList);
 
-        Stage stage = getStage();
-        stage.setResizable(false);
-        stage.showAndWait();
+        super.init(parentStage);
     }
     @FXML private void onOK() {
         getStage().close();

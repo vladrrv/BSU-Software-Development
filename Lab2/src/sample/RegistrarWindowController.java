@@ -42,7 +42,9 @@ public class RegistrarWindowController extends WindowController {
     }
 
     @FXML private void onAddProfessor() {
-
+        AddUserController c =
+                (AddUserController) nextStage("forms/AddUserForm.fxml", "Add Professor");
+        c.init(getStage());
     }
 
     @FXML private void onEditProfessor() {

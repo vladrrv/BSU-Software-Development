@@ -7,7 +7,7 @@ import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 
-public class RegisterForCoursesController extends Controller {
+public class RegisterForCoursesController extends ModalController {
 
     private final int primaryLimit = 1;
     private final int alternateLimit = 1;
@@ -17,7 +17,7 @@ public class RegisterForCoursesController extends Controller {
 
     @FXML private TableView<CourseOffering> tableView;
 
-    void init(long studentId) {
+    void init(Stage parentStage, long studentId) {
         this.studentId = studentId;
         var cols = tableView.getColumns();
         var courseCol = cols.get(0);
@@ -34,9 +34,7 @@ public class RegisterForCoursesController extends Controller {
         offeringsList = DatabaseManager.getOfferings(studentId);
         tableView.setItems(offeringsList);
 
-        Stage stage = getStage();
-        stage.setResizable(false);
-        stage.showAndWait();
+        super.init(parentStage);
     }
 
     @FXML private void onApply() {

@@ -9,7 +9,7 @@ import javafx.scene.control.cell.ComboBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 
-public class SubmitGradesController extends Controller {
+public class SubmitGradesController extends ModalController {
 
     @FXML private ComboBox<Roster> comboBox;
     @FXML private TableView<Grade> tableView;
@@ -18,13 +18,11 @@ public class SubmitGradesController extends Controller {
     private ObservableList<Grade> gradesList;
 
 
-    void init(long professorId) {
+    void init(Stage parentStage, long professorId) {
         rosterList = DatabaseManager.getRosters(professorId);
         comboBox.setItems(rosterList);
 
-        Stage stage = getStage();
-        stage.setResizable(false);
-        stage.showAndWait();
+        super.init(parentStage);
     }
 
     @FXML private void onSelect() {

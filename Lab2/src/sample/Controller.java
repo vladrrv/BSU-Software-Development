@@ -4,7 +4,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -53,8 +52,4 @@ class Controller {
         //stage.setMinWidth(stage.getWidth());
     }
 
-    void setParentStage(Stage parentStage) {
-        stage.initOwner(parentStage);
-        stage.initModality(Modality.APPLICATION_MODAL);
-    }
 }
