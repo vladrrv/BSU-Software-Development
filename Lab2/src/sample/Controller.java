@@ -20,7 +20,7 @@ class Controller {
         this.stage = stage;
     }
 
-    void showError(String errorMessage) {
+    static void showError(String errorMessage) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle("Error");
         alert.setHeaderText("");
@@ -28,10 +28,10 @@ class Controller {
         alert.showAndWait();
     }
 
-    Controller nextStage(String fxmlName, String title) {
+    static Controller nextStage(String fxmlName, String title) {
         Controller c = null;
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlName));
+            FXMLLoader loader = new FXMLLoader(Controller.class.getResource(fxmlName));
             Parent root = loader.load();
             c = loader.getController();
             Scene scene = new Scene(root);

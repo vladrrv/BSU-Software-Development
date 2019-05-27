@@ -20,14 +20,8 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("forms/LoginForm.fxml"));
-        Parent rootLogin = loader.load();
-        Scene sceneLogin = new Scene(rootLogin);
-        LoginController loginController = loader.getController();
-        Stage loginStage = new Stage();
-        loginController.setStage(loginStage);
-        loginStage.setScene(sceneLogin);
-        loginStage.setTitle("Login");
+        LoginController loginController =
+                (LoginController) Controller.nextStage("forms/LoginForm.fxml", "Login");
         loginController.init();
         //primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("res/icon_app.png")));
     }
