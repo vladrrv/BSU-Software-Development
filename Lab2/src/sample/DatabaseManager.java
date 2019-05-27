@@ -84,6 +84,10 @@ class DatabaseManager {
         }
     }
 
+    private static int getRandId() {
+        return new Random().nextInt(9999999);
+    }
+
     static long getStudentId(User user) {
         String q = String.format(
                 "SELECT id FROM students " +
@@ -139,27 +143,52 @@ class DatabaseManager {
         return l;
     }
 
-    private static int getRandId() {
-        return new Random().nextInt(9999999);
+    static ObservableList<Roster> getRosters(long professorId) {
+        ObservableList<Roster> l = FXCollections.observableArrayList(
+                new Roster(1, "bbb"),
+                new Roster(2, "uuu")
+        );
+
+        /*try {
+            Connection con = DriverManager.getConnection(dbURL, dbUser, dbPassword);
+            Statement st = con.createStatement();
+            String q = String.format(
+                    "SELECT description, grade " +
+                    "FROM grades g " +
+                    "LEFT JOIN rosters r ON r.id = g.roster_id " +
+                    "LEFT JOIN course_offerings co ON co.id = r.course_offering_id " +
+                    "LEFT JOIN courses c ON c.id = co.course_id " +
+                    "LEFT JOIN students s ON s.id = g.student_id " +
+                    "WHERE student_id = '%d';",
+                    professorId);
+            ResultSet rs = st.executeQuery(q);
+            while (rs.next()) {
+                String name = (String) rs.getObject(1);
+                Long grade = (Long) rs.getObject(2);
+                l.add(new Grade(name, grade.intValue()));
+            }
+            con.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }*/
+
+        return l;
     }
 
     static ObservableList<Grade> getGrades(long studentId) {
-
-        String q = String.format(
-                "SELECT description, grade " +
-                "FROM grades g " +
-                "LEFT JOIN rosters r ON r.id = g.roster_id " +
-                "LEFT JOIN course_offerings co ON co.id = r.course_offering_id " +
-                "LEFT JOIN courses c ON c.id = co.course_id " +
-                "LEFT JOIN students s ON s.id = g.student_id " +
-                "WHERE student_id = '%d';",
-                studentId);
-
         ObservableList<Grade> l = FXCollections.observableArrayList();
-
         try {
             Connection con = DriverManager.getConnection(dbURL, dbUser, dbPassword);
             Statement st = con.createStatement();
+            String q = String.format(
+                    "SELECT description, grade " +
+                    "FROM grades g " +
+                    "LEFT JOIN rosters r ON r.id = g.roster_id " +
+                    "LEFT JOIN course_offerings co ON co.id = r.course_offering_id " +
+                    "LEFT JOIN courses c ON c.id = co.course_id " +
+                    "LEFT JOIN students s ON s.id = g.student_id " +
+                    "WHERE student_id = '%d';",
+                    studentId);
             ResultSet rs = st.executeQuery(q);
             while (rs.next()) {
                 String name = (String) rs.getObject(1);
@@ -210,12 +239,10 @@ class DatabaseManager {
     }
 
     static void updateStudentOfferings(long studentId, ObservableList<CourseOffering> offerings) {
-
-        String q = "delete from student_course_offerings where student_id = 1;";
-
         try {
             Connection con = DriverManager.getConnection(dbURL, dbUser, dbPassword);
             Statement st = con.createStatement();
+            String q = String.format("delete from student_course_offerings where student_id = %d;", studentId);
             st.execute(q);
             for (var offering : offerings) {
                 long offeringId = offering.getOfferingId();
@@ -232,6 +259,22 @@ class DatabaseManager {
     }
 
     static void updateCourseOfferings(long professorId, ObservableList<Course> courses) {
-        // TODO: update course offerings according to selection
+        try {
+            Connection con = DriverManager.getConnection(dbURL, dbUser, dbPassword);
+            Statement st = con.createStatement();
+            String q = String.format("delete from course_offerings where professor_id = %d;", professorId);
+            st.execute(q);
+            for (var course : courses) {
+                long courseId = course.getCourseId();
+                boolean isSel = course.isSelected();
+                if (isSel) {
+                    q = String.format("INSERT INTO course_offerings VALUES (%d, %d, %d)", getRandId(), professorId, courseId);
+                    st.execute(q);
+                }
+            }
+            con.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }

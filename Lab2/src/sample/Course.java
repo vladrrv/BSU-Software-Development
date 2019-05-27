@@ -32,5 +32,7 @@ public class Course {
         return selected;
     }
 
-
+    public long getCourseId() {
+        return courseId;
+    }
 }
