@@ -21,4 +21,11 @@ class WindowController extends Controller {
         super.init();
         labelName.setText(user.getName());
     }
+
+    @FXML private void onSignOut() {
+        getStage().close();
+        LoginController c =
+                (LoginController) nextStage("forms/LoginForm.fxml", "Login");
+        c.init();
+    }
 }

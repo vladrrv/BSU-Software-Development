@@ -5,7 +5,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.cell.ChoiceBoxTableCell;
 import javafx.scene.control.cell.ComboBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
@@ -17,6 +16,7 @@ public class SubmitGradesController extends Controller {
     private ObservableList<Roster> rosterList;
     private Roster currentRoster;
     private ObservableList<Grade> gradesList;
+
 
     void init(long professorId) {
         rosterList = DatabaseManager.getRosters(professorId);
@@ -32,10 +32,10 @@ public class SubmitGradesController extends Controller {
         gradesList = DatabaseManager.getGradesForRoster(currentRoster.getRosterId());
         var cols = tableView.getColumns();
         var studCol = cols.get(0);
-        TableColumn<Grade, Integer> gradeCol = (TableColumn)cols.get(1);
+        TableColumn<Grade, String> gradeCol = (TableColumn)cols.get(1);
         studCol.setCellValueFactory(new PropertyValueFactory<>("student"));
         gradeCol.setCellValueFactory(new PropertyValueFactory<>("grade"));
-        gradeCol.setCellFactory(ComboBoxTableCell.forTableColumn(1,2,3,4,5,6,7,8,9,10));
+        gradeCol.setCellFactory(ComboBoxTableCell.forTableColumn(Grade.GRADES_STR));
         tableView.setItems(gradesList);
     }
 

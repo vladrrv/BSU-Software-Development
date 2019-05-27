@@ -174,7 +174,7 @@ class DatabaseManager {
             Connection con = DriverManager.getConnection(dbURL, dbUser, dbPassword);
             Statement st = con.createStatement();
             String q = String.format(
-                    "SELECT name, grade " +
+                    "SELECT s.id, name, grade " +
                     "FROM grades g " +
                     "LEFT JOIN rosters r ON r.id = g.roster_id " +
                     "LEFT JOIN course_offerings co ON co.id = r.course_offering_id " +
@@ -183,9 +183,10 @@ class DatabaseManager {
                     rosterId);
             ResultSet rs = st.executeQuery(q);
             while (rs.next()) {
-                String student = (String) rs.getObject(1);
-                Long grade = (Long) rs.getObject(2);
-                l.add(new Grade(grade.intValue(), student));
+                long studentId = ((BigInteger) rs.getObject(1)).longValue();
+                String studentName = (String) rs.getObject(2);
+                Long grade = (Long) rs.getObject(3);
+                l.add(new Grade(studentId, studentName, grade));
             }
             con.close();
         } catch (SQLException e) {
@@ -213,7 +214,7 @@ class DatabaseManager {
             while (rs.next()) {
                 String name = (String) rs.getObject(1);
                 Long grade = (Long) rs.getObject(2);
-                l.add(new Grade(name, grade.intValue()));
+                l.add(new Grade(name, grade));
             }
             con.close();
         } catch (SQLException e) {
@@ -264,11 +265,21 @@ class DatabaseManager {
             Statement st = con.createStatement();
             String q = String.format("delete from student_course_offerings where student_id = %d;", studentId);
             st.execute(q);
+            q = String.format("delete from grades where student_id = %d;", studentId);
+            st.execute(q);
             for (var offering : offerings) {
+                long scoId = getRandId();
+                long gradeId = getRandId();
                 long offeringId = offering.getOfferingId();
                 boolean isAlt = offering.isAlternate();
                 if (offering.isPrimary() || isAlt) {
-                    q = String.format("INSERT INTO student_course_offerings VALUES (%d, %d, %d, %b)", getRandId(), studentId, offeringId, isAlt);
+                    q = String.format(
+                            "INSERT INTO student_course_offerings VALUES (%d, %d, %d, %b)",
+                            scoId, studentId, offeringId, isAlt);
+                    st.execute(q);
+                    q = String.format(
+                            "INSERT INTO grades VALUES (%d, %d, %d, null)",
+                            gradeId, offeringId, studentId);
                     st.execute(q);
                 }
             }
@@ -285,10 +296,13 @@ class DatabaseManager {
             String q = String.format("delete from course_offerings where professor_id = %d;", professorId);
             st.execute(q);
             for (var course : courses) {
+                long coId = getRandId();
                 long courseId = course.getCourseId();
                 boolean isSel = course.isSelected();
                 if (isSel) {
-                    q = String.format("INSERT INTO course_offerings VALUES (%d, %d, %d)", getRandId(), professorId, courseId);
+                    q = String.format("INSERT INTO course_offerings VALUES (%d, %d, %d)", coId, professorId, courseId);
+                    st.execute(q);
+                    q = String.format("INSERT INTO rosters VALUES (%d, %d)", coId, coId);
                     st.execute(q);
                 }
             }
@@ -299,6 +313,30 @@ class DatabaseManager {
     }
 
     static void updateGrades(long rosterId, ObservableList<Grade> grades) {
-        // TODO: update table grades
+        try {
+            Connection con = DriverManager.getConnection(dbURL, dbUser, dbPassword);
+            Statement st = con.createStatement();
+            String q = String.format("delete from grades where roster_id = %d;", rosterId);
+            st.execute(q);
+            for (var grade : grades) {
+                long gradeId = getRandId();
+                long studentId = grade.getStudentId();
+                String g = grade.getGrade();
+                if (!g.equals(Grade.NOGRADE)) {
+                    long gradeVal = Long.parseLong(grade.getGrade());
+                    q = String.format(
+                            "INSERT INTO grades VALUES (%d, %d, %d, %d)",
+                            gradeId, rosterId, studentId, gradeVal);
+                } else {
+                    q = String.format(
+                            "INSERT INTO grades VALUES (%d, %d, %d, null)",
+                            gradeId, rosterId, studentId);
+                }
+                st.execute(q);
+            }
+            con.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }

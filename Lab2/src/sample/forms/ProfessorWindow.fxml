@@ -8,7 +8,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="300.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.ProfessorWindowController">
+<AnchorPane prefHeight="220.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.ProfessorWindowController">
     <children>
         <Button fx:id="buttonSelectCourses" layoutX="15.0" layoutY="182.0" mnemonicParsing="false" onAction="#onSelectCourses" text="Select Courses to Teach">
          <cursor>
@@ -30,6 +30,10 @@
             </children>
         </HBox>
         <Button fx:id="buttonSubmitGrades" layoutX="163.0" layoutY="182.0" mnemonicParsing="false" onAction="#onSubmitGrades" text="Submit Grades">
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor></Button>
+      <Button layoutX="322.0" layoutY="182.0" mnemonicParsing="false" onAction="#onSignOut" text="Sign Out">
          <cursor>
             <Cursor fx:constant="HAND" />
          </cursor></Button>
