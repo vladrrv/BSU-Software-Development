@@ -259,6 +259,50 @@ class DatabaseManager {
         return l;
     }
 
+    static ObservableList<User> getStudents() {
+        String q = "SELECT login_id, name FROM logins JOIN students s on logins.id = s.login_id";
+
+        ObservableList<User> l = FXCollections.observableArrayList();
+
+        try {
+            Connection con = DriverManager.getConnection(dbURL, dbUser, dbPassword);
+            Statement st = con.createStatement();
+            ResultSet rs = st.executeQuery(q);
+            while (rs.next()) {
+                long loginId = ((BigInteger) rs.getObject(1)).longValue();
+                String name = (String) rs.getObject(2);
+                l.add(new User(loginId, name, User.UserType.STUDENT));
+            }
+            con.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return l;
+    }
+
+    static ObservableList<User> getProfessors() {
+        String q = "SELECT login_id, name FROM logins JOIN professors p on logins.id = p.login_id";
+
+        ObservableList<User> l = FXCollections.observableArrayList();
+
+        try {
+            Connection con = DriverManager.getConnection(dbURL, dbUser, dbPassword);
+            Statement st = con.createStatement();
+            ResultSet rs = st.executeQuery(q);
+            while (rs.next()) {
+                long loginId = ((BigInteger) rs.getObject(1)).longValue();
+                String name = (String) rs.getObject(2);
+                l.add(new User(loginId, name, User.UserType.PROFESSOR));
+            }
+            con.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return l;
+    }
+
     static void updateStudentOfferings(long studentId, ObservableList<CourseOffering> offerings) {
         try {
             Connection con = DriverManager.getConnection(dbURL, dbUser, dbPassword);

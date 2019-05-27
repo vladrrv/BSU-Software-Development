@@ -18,6 +18,12 @@ class User {
         this.loginId = loginId;
     }
 
+    public User(long loginId, String name, UserType type) {
+        this.loginId = loginId;
+        this.name = name;
+        this.type = type;
+    }
+
     long getLoginId() {
         return loginId;
     }
