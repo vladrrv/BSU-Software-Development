@@ -277,4 +277,8 @@ class DatabaseManager {
             e.printStackTrace();
         }
     }
+
+    static void updateGrades(long rosterId, ObservableList<Grade> grades) {
+        // TODO: update table grades
+    }
 }
