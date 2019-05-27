@@ -45,6 +45,9 @@ public class RegistrarWindowController extends WindowController {
         AddUserController c =
                 (AddUserController) nextStage("forms/AddUserForm.fxml", "Add Professor");
         c.init(getStage());
+        if (c.isOK()) {
+            DatabaseManager.addProfessor(c.getEmail(), c.getPassword(), c.getName(), c.getInfo());
+        }
     }
 
     @FXML private void onEditProfessor() {

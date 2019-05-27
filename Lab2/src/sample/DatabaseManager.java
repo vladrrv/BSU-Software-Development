@@ -84,7 +84,7 @@ class DatabaseManager {
         }
     }
 
-    private static int getRandId() {
+    static int getRandId() {
         return new Random().nextInt(9999999);
     }
 
@@ -382,5 +382,9 @@ class DatabaseManager {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    static void addProfessor(String email, String password, String name, String info) {
+        // TODO: add professor to table
     }
 }
