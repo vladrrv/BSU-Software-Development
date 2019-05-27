@@ -144,50 +144,70 @@ class DatabaseManager {
     }
 
     static ObservableList<Roster> getRosters(long professorId) {
-        ObservableList<Roster> l = FXCollections.observableArrayList(
-                new Roster(1, "bbb"),
-                new Roster(2, "uuu")
-        );
-
-        /*try {
+        ObservableList<Roster> l = FXCollections.observableArrayList();
+        try {
             Connection con = DriverManager.getConnection(dbURL, dbUser, dbPassword);
             Statement st = con.createStatement();
             String q = String.format(
-                    "SELECT description, grade " +
-                    "FROM grades g " +
-                    "LEFT JOIN rosters r ON r.id = g.roster_id " +
+                    "SELECT r.id, description " +
+                    "FROM rosters r " +
                     "LEFT JOIN course_offerings co ON co.id = r.course_offering_id " +
                     "LEFT JOIN courses c ON c.id = co.course_id " +
-                    "LEFT JOIN students s ON s.id = g.student_id " +
-                    "WHERE student_id = '%d';",
+                    "WHERE co.professor_id = %d;",
                     professorId);
             ResultSet rs = st.executeQuery(q);
             while (rs.next()) {
-                String name = (String) rs.getObject(1);
-                Long grade = (Long) rs.getObject(2);
-                l.add(new Grade(name, grade.intValue()));
+                long rosterId = ((BigInteger) rs.getObject(1)).longValue();
+                String description = (String) rs.getObject(2);
+                l.add(new Roster(rosterId, description));
             }
             con.close();
         } catch (SQLException e) {
             e.printStackTrace();
-        }*/
+        }
+        return l;
+    }
+
+    static ObservableList<Grade> getGradesForRoster(long rosterId) {
+        ObservableList<Grade> l = FXCollections.observableArrayList();
+        try {
+            Connection con = DriverManager.getConnection(dbURL, dbUser, dbPassword);
+            Statement st = con.createStatement();
+            String q = String.format(
+                    "SELECT name, grade " +
+                    "FROM grades g " +
+                    "LEFT JOIN rosters r ON r.id = g.roster_id " +
+                    "LEFT JOIN course_offerings co ON co.id = r.course_offering_id " +
+                    "LEFT JOIN students s ON s.id = g.student_id " +
+                    "WHERE roster_id = '%d';",
+                    rosterId);
+            ResultSet rs = st.executeQuery(q);
+            while (rs.next()) {
+                String student = (String) rs.getObject(1);
+                Long grade = (Long) rs.getObject(2);
+                l.add(new Grade(grade.intValue(), student));
+            }
+            con.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
         return l;
     }
 
-    static ObservableList<Grade> getGrades(long studentId) {
+    static ObservableList<Grade> getGradesForStudent(long studentId) {
         ObservableList<Grade> l = FXCollections.observableArrayList();
         try {
             Connection con = DriverManager.getConnection(dbURL, dbUser, dbPassword);
             Statement st = con.createStatement();
             String q = String.format(
                     "SELECT description, grade " +
-                    "FROM grades g " +
-                    "LEFT JOIN rosters r ON r.id = g.roster_id " +
-                    "LEFT JOIN course_offerings co ON co.id = r.course_offering_id " +
-                    "LEFT JOIN courses c ON c.id = co.course_id " +
-                    "LEFT JOIN students s ON s.id = g.student_id " +
-                    "WHERE student_id = '%d';",
+                            "FROM grades g " +
+                            "LEFT JOIN rosters r ON r.id = g.roster_id " +
+                            "LEFT JOIN course_offerings co ON co.id = r.course_offering_id " +
+                            "LEFT JOIN courses c ON c.id = co.course_id " +
+                            "LEFT JOIN students s ON s.id = g.student_id " +
+                            "WHERE student_id = '%d';",
                     studentId);
             ResultSet rs = st.executeQuery(q);
             while (rs.next()) {

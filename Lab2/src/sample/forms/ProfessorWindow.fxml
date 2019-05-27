@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.image.ImageView?>
@@ -9,7 +10,10 @@
 
 <AnchorPane prefHeight="300.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.ProfessorWindowController">
     <children>
-        <Button fx:id="buttonSelectCourses" layoutX="15.0" layoutY="182.0" mnemonicParsing="false" onAction="#onSelectCourses" text="Select Courses to Teach" />
+        <Button fx:id="buttonSelectCourses" layoutX="15.0" layoutY="182.0" mnemonicParsing="false" onAction="#onSelectCourses" text="Select Courses to Teach">
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor></Button>
         <HBox layoutX="15.0" layoutY="14.0" prefHeight="150.0" prefWidth="370.0" style="-fx-border-width: 1px; -fx-border-color: gray;">
             <children>
                 <ImageView fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true" />
@@ -25,6 +29,9 @@
                 </AnchorPane>
             </children>
         </HBox>
-        <Button fx:id="buttonSubmitGrades" layoutX="163.0" layoutY="182.0" mnemonicParsing="false" onAction="#onSubmitGrades" text="Submit Grades" />
+        <Button fx:id="buttonSubmitGrades" layoutX="163.0" layoutY="182.0" mnemonicParsing="false" onAction="#onSubmitGrades" text="Submit Grades">
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor></Button>
     </children>
 </AnchorPane>

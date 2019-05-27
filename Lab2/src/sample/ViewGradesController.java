@@ -18,7 +18,7 @@ public class ViewGradesController extends Controller {
         courseCol.setCellValueFactory(new PropertyValueFactory<>("course"));
         gradeCol.setCellValueFactory(new PropertyValueFactory<>("grade"));
 
-        gradesList = DatabaseManager.getGrades(studentId);
+        gradesList = DatabaseManager.getGradesForStudent(studentId);
         tableView.setItems(gradesList);
 
         Stage stage = getStage();
