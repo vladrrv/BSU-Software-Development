@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 
 
-<AnchorPane prefHeight="200.0" prefWidth="300.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.forms.AddUserController">
+<AnchorPane prefHeight="200.0" prefWidth="300.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.AddUserController">
    <children>
       <Button cancelButton="true" layoutX="234.0" layoutY="159.0" mnemonicParsing="false" text="Cancel" />
       <Button defaultButton="true" layoutX="174.0" layoutY="159.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="51.0" text="OK" />
