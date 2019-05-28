@@ -51,11 +51,11 @@
                                           <Cursor fx:constant="HAND" />
                                        </cursor>
                                     </Button>
-                                    <Button mnemonicParsing="false" onAction="#onEditProfessor" prefHeight="26.0" prefWidth="52.0" text="Edit">
+                                    <Button fx:id="buttonEditProfessor" disable="true" mnemonicParsing="false" onAction="#onEditProfessor" prefHeight="26.0" prefWidth="52.0" text="Edit">
                                        <cursor>
                                           <Cursor fx:constant="HAND" />
                                        </cursor></Button>
-                                    <Button mnemonicParsing="false" onAction="#onDeleteProfessor" prefHeight="26.0" prefWidth="52.0" text="Delete">
+                                    <Button fx:id="buttonDeleteProfessor" disable="true" mnemonicParsing="false" onAction="#onDeleteProfessor" prefHeight="26.0" prefWidth="52.0" text="Delete">
                                        <cursor>
                                           <Cursor fx:constant="HAND" />
                                        </cursor></Button>
@@ -78,11 +78,11 @@
                                           <Cursor fx:constant="HAND" />
                                        </cursor>
                                     </Button>
-                                    <Button mnemonicParsing="false" onAction="#onEditStudent" prefHeight="26.0" prefWidth="52.0" text="Edit">
+                                    <Button fx:id="buttonEditStudent" disable="true" mnemonicParsing="false" onAction="#onEditStudent" prefHeight="26.0" prefWidth="52.0" text="Edit">
                                        <cursor>
                                           <Cursor fx:constant="HAND" />
                                        </cursor></Button>
-                                    <Button mnemonicParsing="false" onAction="#onDeleteStudent" prefHeight="26.0" prefWidth="52.0" text="Delete">
+                                    <Button fx:id="buttonDeleteStudent" disable="true" mnemonicParsing="false" onAction="#onDeleteStudent" prefHeight="26.0" prefWidth="52.0" text="Delete">
                                        <cursor>
                                           <Cursor fx:constant="HAND" />
                                        </cursor></Button>
@@ -104,6 +104,18 @@
                   </SplitPane>
                </content>
             </Tab>
+            <Tab text="Manage Courses">
+              <content>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <ListView fx:id="lvCourses" layoutX="14.0" layoutY="14.0" prefHeight="206.0" prefWidth="262.0" />
+                        <Button layoutX="289.0" layoutY="14.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="52.0" text="Add" />
+                        <Button disable="true" layoutX="289.0" layoutY="46.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="52.0" text="Edit" />
+                        <Button disable="true" layoutX="289.0" layoutY="78.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="52.0" text="Delete" />
+                     </children>
+                  </AnchorPane>
+              </content>
+            </Tab>
           <Tab text="Manage Registration">
                <content>
                   <AnchorPane prefHeight="200.0" prefWidth="200.0">
@@ -113,7 +125,7 @@
                               <Cursor fx:constant="HAND" />
                            </cursor></Button>
                         <Label fx:id="labelSwitchRegistration" layoutX="78.0" layoutY="201.0" text="Registration Status" />
-                        <TextArea editable="false" layoutX="14.0" layoutY="18.0" prefHeight="165.0" prefWidth="327.0" text="Registration info" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" />
+                        <TextArea fx:id="taRegInfo" editable="false" layoutX="14.0" layoutY="18.0" prefHeight="165.0" prefWidth="327.0" text="Registration info" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" />
                      </children>
                   </AnchorPane>
                </content>

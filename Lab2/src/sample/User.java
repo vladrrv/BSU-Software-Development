@@ -10,17 +10,18 @@ class User {
     }
 
     private long loginId;
+    private String email;
+    private String password;
     private String name;
     private String info;
     private UserType type;
 
-    User(long loginId) {
+    User(long loginId, String email, String password, String name, String info, UserType type) {
         this.loginId = loginId;
-    }
-
-    public User(long loginId, String name, UserType type) {
-        this.loginId = loginId;
+        this.email = email;
+        this.password = password;
         this.name = name;
+        this.info = info;
         this.type = type;
     }
 
@@ -32,24 +33,20 @@ class User {
         return type;
     }
 
-    void setType(UserType type) {
-        this.type = type;
-    }
-
     String getName() {
         return name;
-    }
-
-    void setName(String name) {
-        this.name = name;
     }
 
     public String getInfo() {
         return info;
     }
 
-    public void setInfo(String info) {
-        this.info = info;
+    public String getEmail() {
+        return email;
+    }
+
+    public String getPassword() {
+        return password;
     }
 
     @Override

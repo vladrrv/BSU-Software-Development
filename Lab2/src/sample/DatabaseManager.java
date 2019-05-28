@@ -29,38 +29,38 @@ class DatabaseManager {
         return result;
     }
 
-    static long getLoginId(String email, String password) {
+    static User getUser(String email, String password) {
+
+        //Get user login_id
         String q = String.format(
                 "SELECT id FROM logins " +
                 "WHERE email = '%s' AND password = '%s';",
                 email, password);
         BigInteger id = query(q);
-        return id == null ? -1 : id.longValue();
-    }
-
-    static void setUserFields(User user) {
+        long loginId = (id == null)? -1 : id.longValue();
+        if (loginId < 0) return null;
 
         // Get user type
-        String q = String.format(
+        q = String.format(
                 "SELECT type FROM logins " +
                 "WHERE id = '%s';",
-                user.getLoginId());
+                loginId);
         String type = query(q);
         User.UserType t = (type == null)? User.UserType.UNDEFINED :
                 User.UserType.valueOf(type.toUpperCase());
-        user.setType(t);
 
         // Get user name
         String tableName = type + 's';
         q = String.format(
                 "SELECT name FROM %s " +
                 "WHERE login_id = '%s';",
-                tableName, user.getLoginId());
+                tableName, loginId);
         String name = query(q);
-        user.setName(name);
 
         // Get user info
+        String info = "";
 
+        return new User(loginId, email, password, name, info, t);
     }
 
     static boolean isRegistrationOpen() {
@@ -91,7 +91,7 @@ class DatabaseManager {
     static long getStudentId(User user) {
         String q = String.format(
                 "SELECT id FROM students " +
-                        "WHERE login_id = '%s';",
+                "WHERE login_id = '%s';",
                 user.getLoginId());
         BigInteger res = query(q);
         return res.longValue();
@@ -260,7 +260,7 @@ class DatabaseManager {
     }
 
     static ObservableList<User> getStudents() {
-        String q = "SELECT login_id, name FROM logins JOIN students s on logins.id = s.login_id";
+        String q = "SELECT login_id, email, password, name FROM logins JOIN students s on logins.id = s.login_id";
 
         ObservableList<User> l = FXCollections.observableArrayList();
 
@@ -270,8 +270,10 @@ class DatabaseManager {
             ResultSet rs = st.executeQuery(q);
             while (rs.next()) {
                 long loginId = ((BigInteger) rs.getObject(1)).longValue();
-                String name = (String) rs.getObject(2);
-                l.add(new User(loginId, name, User.UserType.STUDENT));
+                String email = (String) rs.getObject(2);
+                String password = (String) rs.getObject(3);
+                String name = (String) rs.getObject(4);
+                l.add(new User(loginId, email, password, name, "", User.UserType.STUDENT));
             }
             con.close();
         } catch (SQLException e) {
@@ -282,7 +284,7 @@ class DatabaseManager {
     }
 
     static ObservableList<User> getProfessors() {
-        String q = "SELECT login_id, name FROM logins JOIN professors p on logins.id = p.login_id";
+        String q = "SELECT login_id, email, password, name FROM logins JOIN professors p on logins.id = p.login_id";
 
         ObservableList<User> l = FXCollections.observableArrayList();
 
@@ -292,8 +294,10 @@ class DatabaseManager {
             ResultSet rs = st.executeQuery(q);
             while (rs.next()) {
                 long loginId = ((BigInteger) rs.getObject(1)).longValue();
-                String name = (String) rs.getObject(2);
-                l.add(new User(loginId, name, User.UserType.PROFESSOR));
+                String email = (String) rs.getObject(2);
+                String password = (String) rs.getObject(3);
+                String name = (String) rs.getObject(4);
+                l.add(new User(loginId, email, password, name, "", User.UserType.PROFESSOR));
             }
             con.close();
         } catch (SQLException e) {
@@ -385,6 +389,90 @@ class DatabaseManager {
     }
 
     static void addProfessor(String email, String password, String name, String info) {
-        // TODO: add professor to table
+        try {
+            Connection con = DriverManager.getConnection(dbURL, dbUser, dbPassword);
+            Statement st = con.createStatement();
+            int loginId = getRandId();
+            int professorId = getRandId();
+            String q = String.format(
+                    "INSERT INTO logins VALUES (%d, '%s', 'professor', '%s')",
+                    loginId, email, password);
+            st.execute(q);
+            q = String.format(
+                    "INSERT INTO professors VALUES (%d, %d, '%s')",
+                    professorId, loginId, name);
+            st.execute(q);
+            con.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    static void editProfessor(long loginId, String email, String password, String name, String info) {
+        try {
+            Connection con = DriverManager.getConnection(dbURL, dbUser, dbPassword);
+            Statement st = con.createStatement();
+            String q = String.format(
+                    "UPDATE professors SET name = '%s' " +
+                    "WHERE login_id = %d", name, loginId);
+            st.execute(q);
+            q = String.format(
+                    "UPDATE logins SET email = '%s', password = '%s' " +
+                    "WHERE id = %d", email, password, loginId);
+            st.execute(q);
+            con.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    static void addStudent(String email, String password, String name, String info) {
+        try {
+            Connection con = DriverManager.getConnection(dbURL, dbUser, dbPassword);
+            Statement st = con.createStatement();
+            int loginId = getRandId();
+            int studentId = getRandId();
+            String q = String.format(
+                    "INSERT INTO logins VALUES (%d, '%s', 'student', '%s')",
+                    loginId, email, password);
+            st.execute(q);
+            q = String.format(
+                    "INSERT INTO students VALUES (%d, %d, '%s')",
+                    studentId, loginId, name);
+            st.execute(q);
+            con.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    static void editStudent(long loginId, String email, String password, String name, String info) {
+        try {
+            Connection con = DriverManager.getConnection(dbURL, dbUser, dbPassword);
+            Statement st = con.createStatement();
+            String q = String.format(
+                    "UPDATE students SET name = '%s' " +
+                    "WHERE login_id = %d", name, loginId);
+            st.execute(q);
+            q = String.format(
+                    "UPDATE logins SET email = '%s', password = '%s' " +
+                    "WHERE id = %d", email, password, loginId);
+            st.execute(q);
+            con.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    static void deleteUser(long loginId) {
+        try {
+            Connection con = DriverManager.getConnection(dbURL, dbUser, dbPassword);
+            Statement st = con.createStatement();
+            String q = String.format("delete from logins where id = %d;", loginId);
+            st.execute(q);
+            con.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }

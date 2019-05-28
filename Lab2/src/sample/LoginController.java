@@ -11,11 +11,9 @@ public class LoginController extends Controller {
 
     @FXML private void onSignIn() {
         String login = tfLogin.getText(), password = tfPassword.getText();
-        long userId = DatabaseManager.getLoginId(login, password);
-        if (userId > 0) {
+        User user = DatabaseManager.getUser(login, password);
+        if (user != null) {
             getStage().hide();
-            User user = new User(userId);
-            DatabaseManager.setUserFields(user);
             WindowController wc;
             switch (user.getType()) {
                 case STUDENT: {
