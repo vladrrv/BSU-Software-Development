@@ -95,6 +95,7 @@ public class RegistrarWindowController extends WindowController {
                 }
             }
 
+
         }
     }
 

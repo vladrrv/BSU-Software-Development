@@ -4,7 +4,7 @@
 -- https://tableplus.com/
 --
 -- Database: course_catalogue_db
--- Generation Time: 2019-05-27 13:12:30.0730
+-- Generation Time: 2019-05-28 21:24:13.3430
 -- -------------------------------------------------------------
 
 
@@ -91,6 +91,8 @@ CREATE TABLE `professors` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `login_id` bigint(20) unsigned NOT NULL,
   `name` varchar(255) DEFAULT NULL,
+  `degree` varchar(255) DEFAULT NULL,
+  `department` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id` (`id`),
   KEY `login_id` (`login_id`),
@@ -126,6 +128,8 @@ CREATE TABLE `students` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `login_id` bigint(20) unsigned DEFAULT NULL,
   `name` varchar(255) DEFAULT NULL,
+  `course` int(11) NOT NULL DEFAULT '1',
+  `group` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id` (`id`),
   KEY `login_id` (`login_id`),
@@ -151,8 +155,8 @@ INSERT INTO `logins` (`id`, `email`, `type`, `password`) VALUES ('1', 'drobushev
 ('5', 'john.doe@bsu.by', X'61646d696e', '123123'),
 ('6', 'mikhail.skipskiy@bsu.by', X'70726f666573736f72', '123123');
 
-INSERT INTO `professors` (`id`, `login_id`, `name`) VALUES ('1', '1', 'Drobushevich Lubov Fedorovna'),
-('2', '6', 'Skipskiy Mikhail Semenovich');
+INSERT INTO `professors` (`id`, `login_id`, `name`, `degree`, `department`) VALUES ('1', '1', 'Drobushevich Lubov Fedorovna', 'Assistant Professor', 'ICS'),
+('2', '6', 'Skipskiy Mikhail Semenovich', 'Profeesor', 'ICS');
 
 INSERT INTO `rosters` (`id`, `course_offering_id`) VALUES ('11', '11');
 
@@ -160,9 +164,9 @@ INSERT INTO `student_course_offerings` (`id`, `student_id`, `course_offering_id`
 ('5', '2', '11', '1'),
 ('6', '2', '12', '1');
 
-INSERT INTO `students` (`id`, `login_id`, `name`) VALUES ('1', '2', 'Pavel Kalugin'),
-('2', '3', 'Vladislav Reentovich'),
-('3', '4', 'Eugenia Polochanina');
+INSERT INTO `students` (`id`, `login_id`, `name`, `course`, `group`) VALUES ('1', '2', 'Pavel Kalugin', '3', '2'),
+('2', '3', 'Vladislav Reentovich', '3', '2'),
+('3', '4', 'Eugenia Polochanina', '3', '2');
 
 
 
