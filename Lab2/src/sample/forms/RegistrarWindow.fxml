@@ -133,7 +133,6 @@
                            <cursor>
                               <Cursor fx:constant="HAND" />
                            </cursor></Button>
-                        <Label fx:id="labelSwitchRegistration" layoutX="78.0" layoutY="201.0" text="Registration Status" />
                         <TextArea fx:id="taRegInfo" editable="false" layoutX="14.0" layoutY="18.0" prefHeight="165.0" prefWidth="327.0" text="Registration info" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" />
                      </children>
                   </AnchorPane>

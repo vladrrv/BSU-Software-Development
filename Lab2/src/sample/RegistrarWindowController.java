@@ -14,19 +14,20 @@ public class RegistrarWindowController extends WindowController {
     @FXML private Button buttonEditCourse;
     @FXML private Button buttonDeleteCourse;
     @FXML private TextArea taRegInfo;
-    @FXML private Label labelSwitchRegistration;
     @FXML private ListView<User> listViewStudents;
     @FXML private ListView<User> listViewProfessors;
     @FXML private ListView<Course> lvCourses;
 
+    private final int MIN_STUDS_PER_COURSE = 2;
+    private final int MIN_COURSES_PER_STUD = 1;
+
     private void switchButtonLabel() {
         if (DatabaseManager.isRegistrationOpen()) {
             buttonSwitchRegistration.setText("Close");
-            labelSwitchRegistration.setText("Registration is open");
         } else {
             buttonSwitchRegistration.setText("Open");
-            labelSwitchRegistration.setText("Registration is closed");
         }
+        updateRegistrationInfo();
     }
 
     private void updateUserLists() {
@@ -42,12 +43,22 @@ public class RegistrarWindowController extends WindowController {
         lvCourses.setItems(DatabaseManager.getCourses());
     }
 
+    private void updateRegistrationInfo() {
+        boolean isOpen = DatabaseManager.isRegistrationOpen();
+        taRegInfo.setText(String.format(
+                "Registration is %s\n" +
+                "",
+                isOpen? "open": "closed"
+        ));
+    }
+
     @Override
     void init() {
         super.init();
         switchButtonLabel();
         updateUserLists();
         updateCourseList();
+        updateRegistrationInfo();
         listViewStudents.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             buttonEditStudent.setDisable(newValue == null);
             buttonDeleteStudent.setDisable(newValue == null);
@@ -67,6 +78,22 @@ public class RegistrarWindowController extends WindowController {
         switchButtonLabel();
 
         if (isOpen) {
+            for (var offeringId : DatabaseManager.getOfferingIds()) {
+                long nStudents = DatabaseManager.getNStudentsForCourseOffering(offeringId);
+                if (nStudents < MIN_STUDS_PER_COURSE) {
+                    DatabaseManager.deleteCourseOffering(offeringId);
+                }
+            }
+            for (var studentId : DatabaseManager.getStudentIds()) {
+                long nCourses = DatabaseManager.getNPrimaryCoursesForStudent(studentId);
+                long delta = MIN_COURSES_PER_STUD - nCourses;
+                if (delta > 0) {
+                    for (var offeringId : DatabaseManager.getStudentAltOfferingIds(studentId)) {
+                        DatabaseManager.makePrimary(offeringId);
+                        if (--delta == 0) break;
+                    }
+                }
+            }
 
         }
     }

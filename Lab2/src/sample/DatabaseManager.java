@@ -144,6 +144,105 @@ class DatabaseManager {
         return l;
     }
 
+    static ObservableList<Long> getStudentIds() {
+        String q = "select id from students";
+        ObservableList<Long> l = FXCollections.observableArrayList();
+        try {
+            Connection con = DriverManager.getConnection(dbURL, dbUser, dbPassword);
+            Statement st = con.createStatement();
+            ResultSet rs = st.executeQuery(q);
+            while (rs.next()) {
+                long studentId = ((BigInteger) rs.getObject(1)).longValue();
+                l.add(studentId);
+            }
+            con.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return l;
+    }
+
+    static ObservableList<Long> getOfferingIds() {
+        String q = "select id from course_offerings";
+        ObservableList<Long> l = FXCollections.observableArrayList();
+        try {
+            Connection con = DriverManager.getConnection(dbURL, dbUser, dbPassword);
+            Statement st = con.createStatement();
+            ResultSet rs = st.executeQuery(q);
+            while (rs.next()) {
+                long offeringId = ((BigInteger) rs.getObject(1)).longValue();
+                l.add(offeringId);
+            }
+            con.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return l;
+    }
+
+    static ObservableList<Long> getStudentAltOfferingIds(long studentId) {
+        String q = String.format(
+                "select id from student_course_offerings where student_id = %d and is_alt = true",
+                studentId);
+        ObservableList<Long> l = FXCollections.observableArrayList();
+        try {
+            Connection con = DriverManager.getConnection(dbURL, dbUser, dbPassword);
+            Statement st = con.createStatement();
+            ResultSet rs = st.executeQuery(q);
+            while (rs.next()) {
+                long offeringId = ((BigInteger) rs.getObject(1)).longValue();
+                l.add(offeringId);
+            }
+            con.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return l;
+    }
+
+    static long getNStudentsForCourseOffering(long offeringId) {
+        String q = String.format(
+                "select count(*) from student_course_offerings where course_offering_id = %d and is_alt = false",
+                offeringId);
+        return query(q);
+    }
+
+    static long getNPrimaryCoursesForStudent(long studentId) {
+        String q = String.format(
+                "select count(*) from student_course_offerings where student_id = %d and is_alt = false",
+                studentId);
+        return query(q);
+    }
+
+    static void deleteCourseOffering(long offeringId) {
+        try {
+            Connection con = DriverManager.getConnection(dbURL, dbUser, dbPassword);
+            Statement st = con.createStatement();
+            String q = String.format("delete from course_offerings where id = %d;", offeringId);
+            st.execute(q);
+            con.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    static void makePrimary(long studOfferingId) {
+        try {
+            Connection con = DriverManager.getConnection(dbURL, dbUser, dbPassword);
+            Statement st = con.createStatement();
+            String q = String.format(
+                    "UPDATE student_course_offerings SET is_alt = 0 " +
+                    "WHERE id = %d", studOfferingId);
+            st.execute(q);
+            con.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
     static ObservableList<Roster> getRosters(long professorId) {
         ObservableList<Roster> l = FXCollections.observableArrayList();
         try {
@@ -510,7 +609,7 @@ class DatabaseManager {
             Statement st = con.createStatement();
             int courseId = getRandId();
             String q = String.format(
-                    "INSERT INTO logins VALUES (%d, '%s', %d)",
+                    "INSERT INTO courses VALUES (%d, '%s', %d)",
                     courseId, description, price);
             st.execute(q);
             con.close();

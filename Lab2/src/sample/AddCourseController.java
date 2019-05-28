@@ -26,13 +26,12 @@ public class AddCourseController extends ModalController {
         super.init(parentStage);
     }
 
-    private boolean isPriceValid(String email) {
-        String regex = "^[\\w-_.+]*[\\w-_.]@([\\w]+\\.)+[\\w]+[\\w]$";
-        return email.matches(regex);
+    private boolean isPriceValid(String price) {
+        String regex = "[0-9]+([,.][0-9]{1,2})?";
+        return price.matches(regex);
     }
 
     @FXML void onOK() {
-        String description = tfDescription.getText();
         String price = tfPrice.getText();
         if (!isPriceValid(price)) {
             showError("Invalid price");
