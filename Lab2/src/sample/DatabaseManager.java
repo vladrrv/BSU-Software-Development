@@ -69,7 +69,7 @@ class DatabaseManager {
         return (res != null)? res: false;
     }
 
-    static void switchRegistration() {
+    static boolean switchRegistration() {
         boolean isOpen = isRegistrationOpen();
         try {
             Connection con = DriverManager.getConnection(dbURL, dbUser, dbPassword);
@@ -82,6 +82,7 @@ class DatabaseManager {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return isOpen;
     }
 
     static int getRandId() {
@@ -106,7 +107,7 @@ class DatabaseManager {
         return res.longValue();
     }
 
-    static ObservableList<CourseOffering> getOfferings(long studentId) {
+    static ObservableList<CourseOffering> getOfferingsForStudent(long studentId) {
 
         String q = String.format(
                 "with co_by_student_id as (select * from student_course_offerings where student_id = %d) " +
@@ -224,7 +225,7 @@ class DatabaseManager {
         return l;
     }
 
-    static ObservableList<Course> getCourses(long professorId) {
+    static ObservableList<Course> getCoursesForProfessor(long professorId) {
         String q = String.format(
                 "with co_by_professor_id as (" +
                 "    select * from course_offerings where professor_id = %d) " +
@@ -246,10 +247,31 @@ class DatabaseManager {
             ResultSet rs = st.executeQuery(q);
             while (rs.next()) {
                 long courseId = ((BigInteger) rs.getObject(1)).longValue();
-                String course = (String) rs.getObject(2);
+                String description = (String) rs.getObject(2);
                 BigInteger profId = (BigInteger) rs.getObject(3);
                 boolean selected = profId != null;
-                l.add(new Course(courseId, course, selected));
+                l.add(new Course(courseId, description, selected));
+            }
+            con.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return l;
+    }
+
+    static ObservableList<Course> getCourses() {
+        String q = "select id, description, price from courses";
+        ObservableList<Course> l = FXCollections.observableArrayList();
+        try {
+            Connection con = DriverManager.getConnection(dbURL, dbUser, dbPassword);
+            Statement st = con.createStatement();
+            ResultSet rs = st.executeQuery(q);
+            while (rs.next()) {
+                long courseId = ((BigInteger) rs.getObject(1)).longValue();
+                String description = (String) rs.getObject(2);
+                Long price = (Long) rs.getObject(3);
+                l.add(new Course(courseId, description, price.intValue()));
             }
             con.close();
         } catch (SQLException e) {
@@ -469,6 +491,53 @@ class DatabaseManager {
             Connection con = DriverManager.getConnection(dbURL, dbUser, dbPassword);
             Statement st = con.createStatement();
             String q = String.format("delete from logins where id = %d;", loginId);
+            st.execute(q);
+            con.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    static boolean doesEmailExist(String email) {
+        String q = String.format("SELECT id FROM logins WHERE email = '%s'", email);
+        BigInteger id = query(q);
+        return id != null;
+    }
+
+    static void addCourse(String description, int price) {
+        try {
+            Connection con = DriverManager.getConnection(dbURL, dbUser, dbPassword);
+            Statement st = con.createStatement();
+            int courseId = getRandId();
+            String q = String.format(
+                    "INSERT INTO logins VALUES (%d, '%s', %d)",
+                    courseId, description, price);
+            st.execute(q);
+            con.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    static void editCourse(long courseId, String description, int price) {
+        try {
+            Connection con = DriverManager.getConnection(dbURL, dbUser, dbPassword);
+            Statement st = con.createStatement();
+            String q = String.format(
+                    "UPDATE courses SET description = '%s', price = %d " +
+                    "WHERE id = %d", description, price, courseId);
+            st.execute(q);
+            con.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    static void deleteCourse(long courseId) {
+        try {
+            Connection con = DriverManager.getConnection(dbURL, dbUser, dbPassword);
+            Statement st = con.createStatement();
+            String q = String.format("delete from courses where id = %d;", courseId);
             st.execute(q);
             con.close();
         } catch (SQLException e) {

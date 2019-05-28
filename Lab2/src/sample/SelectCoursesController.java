@@ -22,7 +22,7 @@ public class SelectCoursesController extends ModalController {
         courseCol.setCellValueFactory(new PropertyValueFactory<>("description"));
         selectedCol.setCellValueFactory(new PropertyValueFactory<>("selected"));
         selectedCol.setCellFactory(tc -> new CheckBoxTableCell<>());
-        courseList = DatabaseManager.getCourses(professorId);
+        courseList = DatabaseManager.getCoursesForProfessor(professorId);
         tableView.setItems(courseList);
 
         super.init(parentStage);

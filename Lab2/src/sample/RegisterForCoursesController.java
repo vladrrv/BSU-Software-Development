@@ -31,7 +31,7 @@ public class RegisterForCoursesController extends ModalController {
         alternateCol.setCellValueFactory(new PropertyValueFactory<>("alternate"));
         alternateCol.setCellFactory(tc -> new CheckBoxTableCell<>());
 
-        offeringsList = DatabaseManager.getOfferings(studentId);
+        offeringsList = DatabaseManager.getOfferingsForStudent(studentId);
         tableView.setItems(offeringsList);
 
         super.init(parentStage);

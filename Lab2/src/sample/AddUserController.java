@@ -3,7 +3,10 @@ package sample;
 import javafx.fxml.FXML;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+
+import java.io.File;
 
 public class AddUserController extends ModalController {
 
@@ -29,8 +32,30 @@ public class AddUserController extends ModalController {
         super.init(parentStage);
     }
 
+    private boolean isEmailValid(String email) {
+        String regex = "^[\\w-_.+]*[\\w-_.]@([\\w]+\\.)+[\\w]+[\\w]$";
+        return email.matches(regex);
+    }
+    private boolean isPasswordValid(String password) {
+        String regex = "^.{6,}$";
+        return password.matches(regex);
+    }
+
     @FXML void onOK() {
-        // TODO: check if email already exists, if so, display error message and don't close
+        String email = tfEmail.getText();
+        String password = tfPassword.getText();
+        if (!isEmailValid(email)) {
+            showError("Invalid email address");
+            return;
+        }
+        if (DatabaseManager.doesEmailExist(email)) {
+            showError("This email is already used");
+            return;
+        }
+        if (!isPasswordValid(password)) {
+            showError("Invalid password (must be at least 6 characters long)");
+            return;
+        }
         isOK = true;
         getStage().close();
     }
@@ -40,9 +65,16 @@ public class AddUserController extends ModalController {
         getStage().close();
     }
 
-
     @FXML void onBrowse() {
-        
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Open Image File");
+        fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.bmp")
+        );
+        File file = fileChooser.showOpenDialog(getStage());
+        if (file != null) {
+            tfPhoto.setText(file.getAbsolutePath());
+        }
     }
 
     boolean isOK() {

@@ -11,6 +11,8 @@ public class RegistrarWindowController extends WindowController {
     @FXML private Button buttonDeleteProfessor;
     @FXML private Button buttonEditStudent;
     @FXML private Button buttonDeleteStudent;
+    @FXML private Button buttonEditCourse;
+    @FXML private Button buttonDeleteCourse;
     @FXML private TextArea taRegInfo;
     @FXML private Label labelSwitchRegistration;
     @FXML private ListView<User> listViewStudents;
@@ -27,7 +29,7 @@ public class RegistrarWindowController extends WindowController {
         }
     }
 
-    private void updateLists() {
+    private void updateUserLists() {
         ObservableList<User> studentList;
         ObservableList<User> professorList;
         professorList = DatabaseManager.getProfessors();
@@ -36,11 +38,16 @@ public class RegistrarWindowController extends WindowController {
         listViewStudents.setItems(studentList);
     }
 
+    private void updateCourseList() {
+        lvCourses.setItems(DatabaseManager.getCourses());
+    }
+
     @Override
     void init() {
         super.init();
         switchButtonLabel();
-        updateLists();
+        updateUserLists();
+        updateCourseList();
         listViewStudents.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             buttonEditStudent.setDisable(newValue == null);
             buttonDeleteStudent.setDisable(newValue == null);
@@ -49,11 +56,19 @@ public class RegistrarWindowController extends WindowController {
             buttonEditProfessor.setDisable(newValue == null);
             buttonDeleteProfessor.setDisable(newValue == null);
         });
+        lvCourses.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            buttonEditCourse.setDisable(newValue == null);
+            buttonDeleteCourse.setDisable(newValue == null);
+        });
     }
 
     @FXML private void onSwitchRegistration() {
-        DatabaseManager.switchRegistration();
+        boolean isOpen = DatabaseManager.switchRegistration();
         switchButtonLabel();
+
+        if (isOpen) {
+
+        }
     }
 
     @FXML private void onAddProfessor() {
@@ -62,7 +77,7 @@ public class RegistrarWindowController extends WindowController {
         c.init(getStage());
         if (c.isOK()) {
             DatabaseManager.addProfessor(c.getEmail(), c.getPassword(), c.getName(), c.getInfo());
-            updateLists();
+            updateUserLists();
         }
     }
 
@@ -73,7 +88,7 @@ public class RegistrarWindowController extends WindowController {
         c.init(getStage(), professor);
         if (c.isOK()) {
             DatabaseManager.editProfessor(professor.getLoginId(), c.getEmail(), c.getPassword(), c.getName(), c.getInfo());
-            updateLists();
+            updateUserLists();
         }
     }
 
@@ -86,7 +101,7 @@ public class RegistrarWindowController extends WindowController {
         alert.showAndWait().ifPresent(response -> {
             if (response == ButtonType.YES) {
                 DatabaseManager.deleteUser(professor.getLoginId());
-                updateLists();
+                updateUserLists();
             }
         });
     }
@@ -97,7 +112,7 @@ public class RegistrarWindowController extends WindowController {
         c.init(getStage());
         if (c.isOK()) {
             DatabaseManager.addStudent(c.getEmail(), c.getPassword(), c.getName(), c.getInfo());
-            updateLists();
+            updateUserLists();
         }
     }
 
@@ -108,7 +123,7 @@ public class RegistrarWindowController extends WindowController {
         c.init(getStage(), student);
         if (c.isOK()) {
             DatabaseManager.editStudent(student.getLoginId(), c.getEmail(), c.getPassword(), c.getName(), c.getInfo());
-            updateLists();
+            updateUserLists();
         }
     }
 
@@ -121,7 +136,42 @@ public class RegistrarWindowController extends WindowController {
         alert.showAndWait().ifPresent(response -> {
             if (response == ButtonType.YES) {
                 DatabaseManager.deleteUser(student.getLoginId());
-                updateLists();
+                updateUserLists();
+            }
+        });
+    }
+
+    @FXML private void onAddCourse() {
+        AddCourseController c =
+                (AddCourseController) nextStage("forms/AddCourseForm.fxml", "Add Course");
+        c.init(getStage());
+        if (c.isOK()) {
+            DatabaseManager.addCourse(c.getDescription(), c.getPrice());
+            updateCourseList();
+        }
+    }
+
+    @FXML private void onEditCourse() {
+        Course course = lvCourses.getSelectionModel().getSelectedItem();
+        AddCourseController c =
+                (AddCourseController) nextStage("forms/AddCourseForm.fxml", "Edit Course");
+        c.init(getStage(), course);
+        if (c.isOK()) {
+            DatabaseManager.editCourse(course.getCourseId(), c.getDescription(), c.getPrice());
+            updateCourseList();
+        }
+    }
+
+    @FXML private void onDeleteCourse() {
+        Course course = lvCourses.getSelectionModel().getSelectedItem();
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "", ButtonType.YES, ButtonType.NO);
+        alert.setTitle("Confirm Delete");
+        alert.setHeaderText(String.format("Are you sure to delete course '%s'?", course.getDescription()));
+        alert.setContentText("");
+        alert.showAndWait().ifPresent(response -> {
+            if (response == ButtonType.YES) {
+                DatabaseManager.deleteCourse(course.getCourseId());
+                updateCourseList();
             }
         });
     }

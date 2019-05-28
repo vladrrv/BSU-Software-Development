@@ -47,7 +47,10 @@
             <FlowPane hgap="1.0" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
                <children>
                   <TextField fx:id="tfPhoto" prefHeight="26.0" prefWidth="134.0" />
-                  <Button mnemonicParsing="false" onAction="#onBrowse" prefHeight="26.0" prefWidth="61.0" text="Browse" />
+                  <Button mnemonicParsing="false" onAction="#onBrowse" prefHeight="26.0" prefWidth="61.0" text="Browse">
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor></Button>
                </children>
                <padding>
                   <Insets bottom="2.0" top="2.0" />
