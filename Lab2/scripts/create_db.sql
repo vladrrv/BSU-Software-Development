@@ -168,7 +168,11 @@ INSERT INTO `students` (`id`, `login_id`, `name`, `course`, `group`) VALUES ('1'
 ('2', '3', 'Vladislav Reentovich', '3', '2'),
 ('3', '4', 'Eugenia Polochanina', '3', '2');
 
+ALTER TABLE professors
+    ADD COLUMN photo_url VARCHAR(100) AFTER department;
 
+ALTER TABLE students
+    ADD COLUMN photo_url VARCHAR(100) AFTER `group`;
 
 
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;

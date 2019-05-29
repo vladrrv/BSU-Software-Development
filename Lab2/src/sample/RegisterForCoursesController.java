@@ -9,7 +9,7 @@ import javafx.stage.Stage;
 
 public class RegisterForCoursesController extends ModalController {
 
-    private final int primaryLimit = 1;
+    private final int primaryLimit = 2;
     private final int alternateLimit = 1;
 
     private long studentId;

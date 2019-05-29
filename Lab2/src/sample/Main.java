@@ -19,16 +19,15 @@ public class Main extends Application {
     }
 
     @Override
-    public void start(Stage primaryStage) throws Exception {
+    public void start(Stage primaryStage) {
         LoginController loginController =
                 (LoginController) Controller.nextStage("forms/LoginForm.fxml", "Login");
         loginController.init();
-        //primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("res/icon_app.png")));
     }
 
 
     public static void main(String[] args) {
-        //System.setProperty("javafx.preloader", MyPreloader.class.getCanonicalName());
+        System.setProperty("javafx.preloader", MyPreloader.class.getCanonicalName());
         launch(args);
     }
 }

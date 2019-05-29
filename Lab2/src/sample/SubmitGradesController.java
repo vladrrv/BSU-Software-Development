@@ -19,7 +19,7 @@ public class SubmitGradesController extends ModalController {
 
 
     void init(Stage parentStage, long professorId) {
-        rosterList = DatabaseManager.getRosters(professorId);
+        rosterList = DatabaseManager.getRostersForProfessor(professorId);
         comboBox.setItems(rosterList);
 
         super.init(parentStage);

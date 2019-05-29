@@ -6,6 +6,8 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
 <AnchorPane prefHeight="220.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.StudentWindowController">
@@ -14,17 +16,25 @@
          <cursor>
             <Cursor fx:constant="HAND" />
          </cursor></Button>
-      <HBox layoutX="15.0" layoutY="14.0" prefHeight="150.0" prefWidth="370.0" style="-fx-border-width: 1px; -fx-border-color: gray;">
+      <HBox layoutX="15.0" layoutY="14.0" prefHeight="150.0" prefWidth="370.0" style="-fx-border-width: 1px; -fx-border-color: gray; -fx-border-radius: 4;">
          <children>
-            <ImageView fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true" />
+            <Pane prefHeight="150.0" prefWidth="150.0" style="-fx-border-radius: 4 0 0 4; -fx-border-color: #ccc;">
+               <children>
+                  <ImageView fx:id="ivPhoto" fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true" />
+               </children>
+            </Pane>
             <AnchorPane prefHeight="151.0" prefWidth="218.0">
                <children>
-                  <Label fx:id="labelName" layoutX="11.0" layoutY="14.0" text="Name">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Label>
-                  <Label fx:id="labelInfo" layoutX="11.0" layoutY="34.0" text="Info" />
+                  <VBox layoutX="13.0" layoutY="14.0" prefHeight="122.0" prefWidth="191.0" spacing="6.0">
+                     <children>
+                        <Label fx:id="labelName" text="Name" wrapText="true">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="labelInfo" text="Info" wrapText="true" />
+                     </children>
+                  </VBox>
                </children>
             </AnchorPane>
          </children>
@@ -33,7 +43,7 @@
          <cursor>
             <Cursor fx:constant="HAND" />
          </cursor></Button>
-      <Button layoutX="323.0" layoutY="182.0" mnemonicParsing="false" onAction="#onSignOut" text="Sign Out">
+      <Button layoutX="322.0" layoutY="182.0" mnemonicParsing="false" onAction="#onSignOut" prefHeight="26.0" prefWidth="62.0" text="Log Out">
          <cursor>
             <Cursor fx:constant="HAND" />
          </cursor></Button>

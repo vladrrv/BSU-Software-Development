@@ -4,9 +4,14 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Date;
+
 public class RegistrarWindowController extends WindowController {
 
     @FXML private Button buttonSwitchRegistration;
+    @FXML private Button buttonPayment;
     @FXML private Button buttonEditProfessor;
     @FXML private Button buttonDeleteProfessor;
     @FXML private Button buttonEditStudent;
@@ -14,25 +19,32 @@ public class RegistrarWindowController extends WindowController {
     @FXML private Button buttonEditCourse;
     @FXML private Button buttonDeleteCourse;
     @FXML private TextArea taRegInfo;
-    @FXML private ListView<User> listViewStudents;
-    @FXML private ListView<User> listViewProfessors;
+    @FXML private ListView<Student> listViewStudents;
+    @FXML private ListView<Professor> listViewProfessors;
     @FXML private ListView<Course> lvCourses;
 
     private final int MIN_STUDS_PER_COURSE = 2;
     private final int MIN_COURSES_PER_STUD = 1;
 
+    private void log(String s) {
+        String old = taRegInfo.getText();
+        taRegInfo.setText(old + s + '\n');
+    }
+
     private void switchButtonLabel() {
-        if (DatabaseManager.isRegistrationOpen()) {
+        boolean isOpen = DatabaseManager.isRegistrationOpen();
+        if (isOpen) {
             buttonSwitchRegistration.setText("Close");
+            buttonPayment.setDisable(true);
         } else {
             buttonSwitchRegistration.setText("Open");
+            buttonPayment.setDisable(false);
         }
-        updateRegistrationInfo();
     }
 
     private void updateUserLists() {
-        ObservableList<User> studentList;
-        ObservableList<User> professorList;
+        ObservableList<Student> studentList;
+        ObservableList<Professor> professorList;
         professorList = DatabaseManager.getProfessors();
         listViewProfessors.setItems(professorList);
         studentList = DatabaseManager.getStudents();
@@ -43,22 +55,12 @@ public class RegistrarWindowController extends WindowController {
         lvCourses.setItems(DatabaseManager.getCourses());
     }
 
-    private void updateRegistrationInfo() {
-        boolean isOpen = DatabaseManager.isRegistrationOpen();
-        taRegInfo.setText(String.format(
-                "Registration is %s\n" +
-                "",
-                isOpen? "open": "closed"
-        ));
-    }
-
     @Override
     void init() {
         super.init();
         switchButtonLabel();
         updateUserLists();
         updateCourseList();
-        updateRegistrationInfo();
         listViewStudents.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             buttonEditStudent.setDisable(newValue == null);
             buttonDeleteStudent.setDisable(newValue == null);
@@ -74,37 +76,57 @@ public class RegistrarWindowController extends WindowController {
     }
 
     @FXML private void onSwitchRegistration() {
-        boolean isOpen = DatabaseManager.switchRegistration();
+        boolean isClosed = DatabaseManager.switchRegistration();
+        log(String.format("Registration %s at %s", isClosed? "closed": "opened", new Date()));
         switchButtonLabel();
 
-        if (isOpen) {
-            for (var offeringId : DatabaseManager.getOfferingIds()) {
+        if (isClosed) {
+            for (var offeringId : DatabaseManager.getUnfixedOfferingIds()) {
                 long nStudents = DatabaseManager.getNStudentsForCourseOffering(offeringId);
-                if (nStudents < MIN_STUDS_PER_COURSE) {
-                    DatabaseManager.deleteCourseOffering(offeringId);
+                if (nStudents >= MIN_STUDS_PER_COURSE) {
+                    DatabaseManager.fixCourseOffering(offeringId);
                 }
             }
             for (var studentId : DatabaseManager.getStudentIds()) {
-                long nCourses = DatabaseManager.getNPrimaryCoursesForStudent(studentId);
+                long nCourses = DatabaseManager.getNFixedCoursesForStudent(studentId);
                 long delta = MIN_COURSES_PER_STUD - nCourses;
                 if (delta > 0) {
                     for (var offeringId : DatabaseManager.getStudentAltOfferingIds(studentId)) {
                         DatabaseManager.makePrimary(offeringId);
-                        if (--delta == 0) break;
                     }
                 }
             }
+            for (var offeringId : DatabaseManager.getUnfixedOfferingIds()) {
+                long nStudents = DatabaseManager.getNStudentsForCourseOffering(offeringId);
+                if (nStudents >= MIN_STUDS_PER_COURSE) {
+                    DatabaseManager.fixCourseOffering(offeringId);
+                }
+            }
+            DatabaseManager.removeUnfixedSCO();
+        } else {
+            DatabaseManager.clearAll();
+        }
+    }
 
-
+    @FXML private void onSend() {
+        String bill = DatabaseManager.getPaymentString();
+        try {
+            PrintWriter out = new PrintWriter("bill.csv");
+            out.println(bill);
+            out.close();
+            log(String.format("Bill sent at %s", new Date()));
+        } catch (IOException ex) {
+            showError("Could not write bill file");
         }
     }
 
     @FXML private void onAddProfessor() {
         AddUserController c =
-                (AddUserController) nextStage("forms/AddUserForm.fxml", "Add Professor");
+                (AddUserController) nextStage("forms/AddProfessorForm.fxml", "Add Professor");
         c.init(getStage());
         if (c.isOK()) {
-            DatabaseManager.addProfessor(c.getEmail(), c.getPassword(), c.getName(), c.getInfo());
+            DatabaseManager.addProfessor(c.getEmail(), c.getPassword(), c.getName(),
+                    c.getInfo1(), c.getInfo2(), c.getPhotoURL());
             updateUserLists();
         }
     }
@@ -112,10 +134,11 @@ public class RegistrarWindowController extends WindowController {
     @FXML private void onEditProfessor() {
         User professor = listViewProfessors.getSelectionModel().getSelectedItem();
         AddUserController c =
-                (AddUserController) nextStage("forms/AddUserForm.fxml", "Edit Professor");
+                (AddUserController) nextStage("forms/AddProfessorForm.fxml", "Edit Professor");
         c.init(getStage(), professor);
         if (c.isOK()) {
-            DatabaseManager.editProfessor(professor.getLoginId(), c.getEmail(), c.getPassword(), c.getName(), c.getInfo());
+            DatabaseManager.editProfessor(professor.getLoginId(), c.getEmail(), c.getPassword(), c.getName(),
+                    c.getInfo1(), c.getInfo2(), c.getPhotoURL());
             updateUserLists();
         }
     }
@@ -136,10 +159,11 @@ public class RegistrarWindowController extends WindowController {
 
     @FXML private void onAddStudent() {
         AddUserController c =
-                (AddUserController) nextStage("forms/AddUserForm.fxml", "Add Student");
+                (AddUserController) nextStage("forms/AddStudentForm.fxml", "Add Student");
         c.init(getStage());
         if (c.isOK()) {
-            DatabaseManager.addStudent(c.getEmail(), c.getPassword(), c.getName(), c.getInfo());
+            DatabaseManager.addStudent(c.getEmail(), c.getPassword(), c.getName(),
+                    Integer.parseInt(c.getInfo1()), c.getInfo2(), c.getPhotoURL());
             updateUserLists();
         }
     }
@@ -147,10 +171,11 @@ public class RegistrarWindowController extends WindowController {
     @FXML private void onEditStudent() {
         User student = listViewStudents.getSelectionModel().getSelectedItem();
         AddUserController c =
-                (AddUserController) nextStage("forms/AddUserForm.fxml", "Edit Student");
+                (AddUserController) nextStage("forms/AddStudentForm.fxml", "Edit Student");
         c.init(getStage(), student);
         if (c.isOK()) {
-            DatabaseManager.editStudent(student.getLoginId(), c.getEmail(), c.getPassword(), c.getName(), c.getInfo());
+            DatabaseManager.editStudent(student.getLoginId(), c.getEmail(), c.getPassword(), c.getName(),
+                    Integer.parseInt(c.getInfo1()), c.getInfo2(), c.getPhotoURL());
             updateUserLists();
         }
     }

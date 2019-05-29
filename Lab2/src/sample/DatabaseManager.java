@@ -3,6 +3,7 @@ package sample;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.*;
 import java.util.Random;
@@ -12,6 +13,10 @@ class DatabaseManager {
     private static final String dbURL = "jdbc:mysql://localhost:3306/lab2";
     private static final String dbUser = "root";
     private static final String dbPassword = "universe";
+
+    private static int getRandId() {
+        return new Random().nextInt(9999999);
+    }
 
     private static <T> T query(String q) {
         T result = null;
@@ -46,21 +51,62 @@ class DatabaseManager {
                 "WHERE id = '%s';",
                 loginId);
         String type = query(q);
-        User.UserType t = (type == null)? User.UserType.UNDEFINED :
-                User.UserType.valueOf(type.toUpperCase());
 
         // Get user name
         String tableName = type + 's';
         q = String.format(
                 "SELECT name FROM %s " +
-                "WHERE login_id = '%s';",
+                        "WHERE login_id = '%s';",
                 tableName, loginId);
         String name = query(q);
 
-        // Get user info
-        String info = "";
+        User user = null;
+        switch (type) {
+            case "student": {
+                q = String.format(
+                        "SELECT course FROM students " +
+                                "WHERE login_id = '%s';",
+                        loginId);
+                int course = query(q);
+                q = String.format(
+                        "SELECT `group` FROM students " +
+                                "WHERE login_id = '%s';",
+                        loginId);
+                String group = query(q);
+                q = String.format(
+                        "SELECT photo_url FROM students " +
+                                "WHERE login_id = '%s';",
+                        loginId);
+                String photoURL = query(q);
+                user = new Student(loginId, email, password, name, course, group, photoURL);
+                break;
+            }
+            case "professor": {
+                q = String.format(
+                        "SELECT degree FROM professors " +
+                                "WHERE login_id = '%s';",
+                        loginId);
+                String degree = query(q);
+                q = String.format(
+                        "SELECT department FROM professors " +
+                                "WHERE login_id = '%s';",
+                        loginId);
+                String department = query(q);
+                q = String.format(
+                        "SELECT photo_url FROM professors " +
+                                "WHERE login_id = '%s';",
+                        loginId);
+                String photoURL = query(q);
+                user = new Professor(loginId, email, password, name, photoURL, degree, department);
+                break;
+            }
+            case "admin": {
+                user = new User(loginId, email, password, name, "");
+                break;
+            }
+        }
 
-        return new User(loginId, email, password, name, info, t);
+        return user;
     }
 
     static boolean isRegistrationOpen() {
@@ -83,10 +129,6 @@ class DatabaseManager {
             e.printStackTrace();
         }
         return isOpen;
-    }
-
-    static int getRandId() {
-        return new Random().nextInt(9999999);
     }
 
     static long getStudentId(User user) {
@@ -163,8 +205,31 @@ class DatabaseManager {
         return l;
     }
 
-    static ObservableList<Long> getOfferingIds() {
-        String q = "select id from course_offerings";
+    static ObservableList<Long> getStudentIdsForCourseOffering(long coId) {
+        String q = String.format(
+                "select student_id from student_course_offerings where course_offering_id = %d",
+                coId);
+        ObservableList<Long> l = FXCollections.observableArrayList();
+        try {
+            Connection con = DriverManager.getConnection(dbURL, dbUser, dbPassword);
+            Statement st = con.createStatement();
+            ResultSet rs = st.executeQuery(q);
+            while (rs.next()) {
+                long studentId = ((BigInteger) rs.getObject(1)).longValue();
+                l.add(studentId);
+            }
+            con.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return l;
+    }
+
+    static ObservableList<Long> getUnfixedOfferingIds() {
+        String q = "select co.id " +
+                "from course_offerings co join student_course_offerings sco on co.id = sco.course_offering_id " +
+                "where sco.is_alt is not null";
         ObservableList<Long> l = FXCollections.observableArrayList();
         try {
             Connection con = DriverManager.getConnection(dbURL, dbUser, dbPassword);
@@ -203,39 +268,51 @@ class DatabaseManager {
         return l;
     }
 
-    static long getNStudentsForCourseOffering(long offeringId) {
+    static long getNStudentsForCourseOffering(long coId) {
         String q = String.format(
                 "select count(*) from student_course_offerings where course_offering_id = %d and is_alt = false",
-                offeringId);
+                coId);
         return query(q);
     }
 
-    static long getNPrimaryCoursesForStudent(long studentId) {
+    static long getNFixedCoursesForStudent(long studentId) {
         String q = String.format(
-                "select count(*) from student_course_offerings where student_id = %d and is_alt = false",
+                "select count(*) from student_course_offerings where student_id = %d and is_alt is null",
                 studentId);
         return query(q);
     }
 
-    static void deleteCourseOffering(long offeringId) {
+    static void fixCourseOffering(long coId) {
         try {
             Connection con = DriverManager.getConnection(dbURL, dbUser, dbPassword);
             Statement st = con.createStatement();
-            String q = String.format("delete from course_offerings where id = %d;", offeringId);
+            String q = String.format(
+                    "UPDATE student_course_offerings SET is_alt = null " +
+                    "WHERE course_offering_id = %d", coId);
             st.execute(q);
+            q = String.format("INSERT INTO rosters VALUES (%d, %d)", coId, coId);
+            st.execute(q);
+            // for each student in roster make grades
+            for (var studentId : getStudentIdsForCourseOffering(coId)) {
+                long gradeId = getRandId();
+                q = String.format(
+                        "INSERT INTO grades VALUES (%d, %d, %d, null)",
+                        gradeId, coId, studentId);
+                st.execute(q);
+            }
             con.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    static void makePrimary(long studOfferingId) {
+    static void makePrimary(long scoId) {
         try {
             Connection con = DriverManager.getConnection(dbURL, dbUser, dbPassword);
             Statement st = con.createStatement();
             String q = String.format(
                     "UPDATE student_course_offerings SET is_alt = 0 " +
-                    "WHERE id = %d", studOfferingId);
+                    "WHERE id = %d", scoId);
             st.execute(q);
             con.close();
         } catch (SQLException e) {
@@ -243,7 +320,33 @@ class DatabaseManager {
         }
     }
 
-    static ObservableList<Roster> getRosters(long professorId) {
+    static void removeUnfixedSCO() {
+        try {
+            Connection con = DriverManager.getConnection(dbURL, dbUser, dbPassword);
+            Statement st = con.createStatement();
+            String q = "DELETE FROM student_course_offerings WHERE is_alt is not null";
+            st.execute(q);
+            con.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    static void clearAll() {
+        try {
+            Connection con = DriverManager.getConnection(dbURL, dbUser, dbPassword);
+            Statement st = con.createStatement();
+            String q = "DELETE FROM rosters WHERE TRUE";
+            st.execute(q);
+            q = "DELETE FROM course_offerings WHERE TRUE";
+            st.execute(q);
+            con.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    static ObservableList<Roster> getRostersForProfessor(long professorId) {
         ObservableList<Roster> l = FXCollections.observableArrayList();
         try {
             Connection con = DriverManager.getConnection(dbURL, dbUser, dbPassword);
@@ -380,10 +483,11 @@ class DatabaseManager {
         return l;
     }
 
-    static ObservableList<User> getStudents() {
-        String q = "SELECT login_id, email, password, name FROM logins JOIN students s on logins.id = s.login_id";
+    static ObservableList<Student> getStudents() {
+        String q = "SELECT login_id, email, password, name, course, `group`, photo_url " +
+                "FROM logins JOIN students s on logins.id = s.login_id";
 
-        ObservableList<User> l = FXCollections.observableArrayList();
+        ObservableList<Student> l = FXCollections.observableArrayList();
 
         try {
             Connection con = DriverManager.getConnection(dbURL, dbUser, dbPassword);
@@ -394,7 +498,10 @@ class DatabaseManager {
                 String email = (String) rs.getObject(2);
                 String password = (String) rs.getObject(3);
                 String name = (String) rs.getObject(4);
-                l.add(new User(loginId, email, password, name, "", User.UserType.STUDENT));
+                int course = (Integer) rs.getObject(5);
+                String group = (String) rs.getObject(6);
+                String photoURL = (String) rs.getObject(7);
+                l.add(new Student(loginId, email, password, name, course, group, photoURL));
             }
             con.close();
         } catch (SQLException e) {
@@ -404,10 +511,11 @@ class DatabaseManager {
         return l;
     }
 
-    static ObservableList<User> getProfessors() {
-        String q = "SELECT login_id, email, password, name FROM logins JOIN professors p on logins.id = p.login_id";
+    static ObservableList<Professor> getProfessors() {
+        String q = "SELECT login_id, email, password, name, degree, department, photo_url " +
+                "FROM logins JOIN professors p on logins.id = p.login_id";
 
-        ObservableList<User> l = FXCollections.observableArrayList();
+        ObservableList<Professor> l = FXCollections.observableArrayList();
 
         try {
             Connection con = DriverManager.getConnection(dbURL, dbUser, dbPassword);
@@ -418,7 +526,10 @@ class DatabaseManager {
                 String email = (String) rs.getObject(2);
                 String password = (String) rs.getObject(3);
                 String name = (String) rs.getObject(4);
-                l.add(new User(loginId, email, password, name, "", User.UserType.PROFESSOR));
+                String degree = (String) rs.getObject(5);
+                String department = (String) rs.getObject(6);
+                String photoURL = (String) rs.getObject(7);
+                l.add(new Professor(loginId, email, password, name, photoURL, degree, department));
             }
             con.close();
         } catch (SQLException e) {
@@ -434,21 +545,14 @@ class DatabaseManager {
             Statement st = con.createStatement();
             String q = String.format("delete from student_course_offerings where student_id = %d;", studentId);
             st.execute(q);
-            q = String.format("delete from grades where student_id = %d;", studentId);
-            st.execute(q);
             for (var offering : offerings) {
                 long scoId = getRandId();
-                long gradeId = getRandId();
                 long offeringId = offering.getOfferingId();
                 boolean isAlt = offering.isAlternate();
                 if (offering.isPrimary() || isAlt) {
                     q = String.format(
                             "INSERT INTO student_course_offerings VALUES (%d, %d, %d, %b)",
                             scoId, studentId, offeringId, isAlt);
-                    st.execute(q);
-                    q = String.format(
-                            "INSERT INTO grades VALUES (%d, %d, %d, null)",
-                            gradeId, offeringId, studentId);
                     st.execute(q);
                 }
             }
@@ -470,8 +574,6 @@ class DatabaseManager {
                 boolean isSel = course.isSelected();
                 if (isSel) {
                     q = String.format("INSERT INTO course_offerings VALUES (%d, %d, %d)", coId, professorId, courseId);
-                    st.execute(q);
-                    q = String.format("INSERT INTO rosters VALUES (%d, %d)", coId, coId);
                     st.execute(q);
                 }
             }
@@ -509,7 +611,8 @@ class DatabaseManager {
         }
     }
 
-    static void addProfessor(String email, String password, String name, String info) {
+    static void addProfessor(String email, String password, String name,
+                             String degree, String department, String photoURL) {
         try {
             Connection con = DriverManager.getConnection(dbURL, dbUser, dbPassword);
             Statement st = con.createStatement();
@@ -520,8 +623,8 @@ class DatabaseManager {
                     loginId, email, password);
             st.execute(q);
             q = String.format(
-                    "INSERT INTO professors VALUES (%d, %d, '%s')",
-                    professorId, loginId, name);
+                    "INSERT INTO professors VALUES (%d, %d, '%s', '%s', '%s', '%s')",
+                    professorId, loginId, name, degree, department, photoURL);
             st.execute(q);
             con.close();
         } catch (SQLException e) {
@@ -529,13 +632,14 @@ class DatabaseManager {
         }
     }
 
-    static void editProfessor(long loginId, String email, String password, String name, String info) {
+    static void editProfessor(long loginId, String email, String password, String name,
+                              String degree, String department, String photoURL) {
         try {
             Connection con = DriverManager.getConnection(dbURL, dbUser, dbPassword);
             Statement st = con.createStatement();
             String q = String.format(
-                    "UPDATE professors SET name = '%s' " +
-                    "WHERE login_id = %d", name, loginId);
+                    "UPDATE professors SET name = '%s', degree = '%s', department = '%s', photo_url = '%s' " +
+                    "WHERE login_id = %d", name, degree, department, photoURL, loginId);
             st.execute(q);
             q = String.format(
                     "UPDATE logins SET email = '%s', password = '%s' " +
@@ -547,7 +651,8 @@ class DatabaseManager {
         }
     }
 
-    static void addStudent(String email, String password, String name, String info) {
+    static void addStudent(String email, String password, String name,
+                           int course, String group, String photoURL) {
         try {
             Connection con = DriverManager.getConnection(dbURL, dbUser, dbPassword);
             Statement st = con.createStatement();
@@ -558,8 +663,8 @@ class DatabaseManager {
                     loginId, email, password);
             st.execute(q);
             q = String.format(
-                    "INSERT INTO students VALUES (%d, %d, '%s')",
-                    studentId, loginId, name);
+                    "INSERT INTO students VALUES (%d, %d, '%s', %d, '%s', '%s')",
+                    studentId, loginId, name, course, group, photoURL);
             st.execute(q);
             con.close();
         } catch (SQLException e) {
@@ -567,13 +672,14 @@ class DatabaseManager {
         }
     }
 
-    static void editStudent(long loginId, String email, String password, String name, String info) {
+    static void editStudent(long loginId, String email, String password, String name,
+                            int course, String group, String photoURL) {
         try {
             Connection con = DriverManager.getConnection(dbURL, dbUser, dbPassword);
             Statement st = con.createStatement();
             String q = String.format(
-                    "UPDATE students SET name = '%s' " +
-                    "WHERE login_id = %d", name, loginId);
+                    "UPDATE students SET name = '%s', course = %d, `group` = %s, photo_url = '%s' " +
+                    "WHERE login_id = %d", name, course, group, photoURL, loginId);
             st.execute(q);
             q = String.format(
                     "UPDATE logins SET email = '%s', password = '%s' " +
@@ -642,5 +748,33 @@ class DatabaseManager {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    static String getPaymentString() {
+        StringBuilder sb = new StringBuilder("Student,Bill");
+        String q = "select name, SUM(price) " +
+                "from student_course_offerings sco " +
+                "JOIN course_offerings co ON co.id = sco.course_offering_id " +
+                "JOIN courses c ON c.id = co.course_id " +
+                "JOIN students s ON s.id = sco.student_id " +
+                "GROUP BY student_id";
+        try {
+            Connection con = DriverManager.getConnection(dbURL, dbUser, dbPassword);
+            Statement st = con.createStatement();
+            ResultSet rs = st.executeQuery(q);
+            while (rs.next()) {
+                String name = (String) rs.getObject(1);
+                double bill = ((BigDecimal) rs.getObject(2)).doubleValue();
+                sb.append('\n');
+                sb.append(name);
+                sb.append(',');
+                sb.append(bill);
+            }
+            con.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return sb.toString();
     }
 }

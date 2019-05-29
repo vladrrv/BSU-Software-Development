@@ -2,43 +2,26 @@ package sample;
 
 class User {
 
-    enum UserType {
-        STUDENT,
-        PROFESSOR,
-        ADMIN,
-        UNDEFINED
-    }
-
     private long loginId;
     private String email;
     private String password;
     private String name;
-    private String info;
-    private UserType type;
+    private String photoURL;
 
-    User(long loginId, String email, String password, String name, String info, UserType type) {
+    public User(long loginId, String email, String password, String name, String photoURL) {
         this.loginId = loginId;
         this.email = email;
         this.password = password;
         this.name = name;
-        this.info = info;
-        this.type = type;
+        this.photoURL = photoURL;
     }
 
     long getLoginId() {
         return loginId;
     }
 
-    UserType getType() {
-        return type;
-    }
-
     String getName() {
         return name;
-    }
-
-    public String getInfo() {
-        return info;
     }
 
     public String getEmail() {
@@ -47,6 +30,22 @@ class User {
 
     public String getPassword() {
         return password;
+    }
+
+    public String getPhotoURL() {
+        return photoURL;
+    }
+
+    boolean isStudent() {
+        return this instanceof Student;
+    }
+
+    boolean isProfessor() {
+        return this instanceof Professor;
+    }
+
+    String getInfo() {
+        return "";
     }
 
     @Override

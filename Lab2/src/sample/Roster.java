@@ -1,8 +1,5 @@
 package sample;
 
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
-
 public class Roster {
     private long rosterId;
     private String course;

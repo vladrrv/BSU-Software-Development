@@ -4,6 +4,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -48,8 +49,6 @@ class Controller {
     void init() {
         stage.show();
         stage.setResizable(false);
-        //stage.setMinHeight(stage.getHeight());
-        //stage.setMinWidth(stage.getWidth());
+        stage.getIcons().add(new Image(getClass().getResourceAsStream("../icon_app.png")));
     }
-
 }

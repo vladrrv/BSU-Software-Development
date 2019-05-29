@@ -11,11 +11,13 @@ import java.io.File;
 public class AddUserController extends ModalController {
 
     private boolean isOK = false;
+    private String initialEmail;
 
     @FXML private TextField tfEmail;
     @FXML private PasswordField tfPassword;
     @FXML private TextField tfName;
-    @FXML private TextField tfInfo;
+    @FXML private TextField tfInfo1;
+    @FXML private TextField tfInfo2;
     @FXML private TextField tfPhoto;
 
     @Override
@@ -25,10 +27,17 @@ public class AddUserController extends ModalController {
     }
 
     void init(Stage parentStage, User user) {
+        initialEmail = user.getEmail();
         tfEmail.setText(user.getEmail());
         tfPassword.setText(user.getPassword());
         tfName.setText(user.getName());
-        tfInfo.setText(user.getInfo());
+        if (user.isStudent()) {
+            tfInfo1.setText(String.valueOf(((Student)user).getCourse()));
+            tfInfo2.setText(String.valueOf(((Student)user).getGroup()));
+        } else if (user.isProfessor()) {
+            tfInfo1.setText(((Professor)user).getDegree());
+            tfInfo2.setText(((Professor)user).getDepartment());
+        }
         super.init(parentStage);
     }
 
@@ -48,7 +57,7 @@ public class AddUserController extends ModalController {
             showError("Invalid email address");
             return;
         }
-        if (DatabaseManager.doesEmailExist(email)) {
+        if (!email.equals(initialEmail) && DatabaseManager.doesEmailExist(email)) {
             showError("This email is already used");
             return;
         }
@@ -73,7 +82,7 @@ public class AddUserController extends ModalController {
         );
         File file = fileChooser.showOpenDialog(getStage());
         if (file != null) {
-            tfPhoto.setText(file.getAbsolutePath());
+            tfPhoto.setText(file.toURI().toString());
         }
     }
 
@@ -90,7 +99,14 @@ public class AddUserController extends ModalController {
     String getName() {
         return tfName.getText();
     }
-    String getInfo() {
-        return tfInfo.getText();
+    String getInfo1() {
+        return tfInfo1.getText();
     }
+    String getInfo2() {
+        return tfInfo2.getText();
+    }
+    String getPhotoURL() {
+        return tfPhoto.getText();
+    }
+
 }
