@@ -20,7 +20,7 @@
             <children>
             <Pane prefHeight="150.0" prefWidth="150.0" style="-fx-border-radius: 4 0 0 4; -fx-border-color: #ccc;">
                <children>
-                      <ImageView fx:id="ivPhoto" fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true" />
+                      <ImageView fx:id="ivPhoto" fitHeight="148.0" fitWidth="148.0" pickOnBounds="true" preserveRatio="true" />
                </children>
             </Pane>
                 <AnchorPane prefHeight="151.0" prefWidth="218.0">

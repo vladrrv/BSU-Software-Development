@@ -38,6 +38,7 @@ public class AddUserController extends ModalController {
             tfInfo1.setText(((Professor)user).getDegree());
             tfInfo2.setText(((Professor)user).getDepartment());
         }
+        tfPhoto.setText(user.getPhotoURL());
         super.init(parentStage);
     }
 

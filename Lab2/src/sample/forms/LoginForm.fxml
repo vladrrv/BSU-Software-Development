@@ -24,8 +24,8 @@
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <TextField fx:id="tfLogin" promptText="email" text="john.doe@bsu.by" />
-            <PasswordField fx:id="tfPassword" promptText="password" text="123123" GridPane.rowIndex="1" />
+            <TextField fx:id="tfLogin" promptText="email" />
+            <PasswordField fx:id="tfPassword" promptText="password" GridPane.rowIndex="1" />
             <Button defaultButton="true" mnemonicParsing="false" onAction="#onSignIn" prefHeight="26.0" prefWidth="149.0" text="Log In" GridPane.rowIndex="2">
                <cursor>
                   <Cursor fx:constant="HAND" />
