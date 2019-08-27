@@ -4,7 +4,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
-import javafx.stage.Modality;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -20,7 +20,7 @@ class Controller {
         this.stage = stage;
     }
 
-    void showError(String errorMessage) {
+    static void showError(String errorMessage) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle("Error");
         alert.setHeaderText("");
@@ -28,10 +28,10 @@ class Controller {
         alert.showAndWait();
     }
 
-    Controller nextStage(String fxmlName, String title) {
+    static Controller nextStage(String fxmlName, String title) {
         Controller c = null;
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlName));
+            FXMLLoader loader = new FXMLLoader(Controller.class.getResource(fxmlName));
             Parent root = loader.load();
             c = loader.getController();
             Scene scene = new Scene(root);
@@ -49,12 +49,6 @@ class Controller {
     void init() {
         stage.show();
         stage.setResizable(false);
-        //stage.setMinHeight(stage.getHeight());
-        //stage.setMinWidth(stage.getWidth());
-    }
-
-    void setParentStage(Stage parentStage) {
-        stage.initOwner(parentStage);
-        stage.initModality(Modality.APPLICATION_MODAL);
+        stage.getIcons().add(new Image(getClass().getResourceAsStream("../icon_app.png")));
     }
 }

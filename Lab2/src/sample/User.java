@@ -2,48 +2,50 @@ package sample;
 
 class User {
 
-    enum UserType {
-        STUDENT,
-        PROFESSOR,
-        ADMIN,
-        UNDEFINED
-    }
-
     private long loginId;
+    private String email;
+    private String password;
     private String name;
-    private String info;
-    private UserType type;
+    private String photoURL;
 
-    User(long loginId) {
+    public User(long loginId, String email, String password, String name, String photoURL) {
         this.loginId = loginId;
+        this.email = email;
+        this.password = password;
+        this.name = name;
+        this.photoURL = photoURL;
     }
 
     long getLoginId() {
         return loginId;
     }
 
-    UserType getType() {
-        return type;
-    }
-
-    void setType(UserType type) {
-        this.type = type;
-    }
-
     String getName() {
         return name;
     }
 
-    void setName(String name) {
-        this.name = name;
+    public String getEmail() {
+        return email;
     }
 
-    public String getInfo() {
-        return info;
+    public String getPassword() {
+        return password;
     }
 
-    public void setInfo(String info) {
-        this.info = info;
+    public String getPhotoURL() {
+        return photoURL;
+    }
+
+    boolean isStudent() {
+        return this instanceof Student;
+    }
+
+    boolean isProfessor() {
+        return this instanceof Professor;
+    }
+
+    String getInfo() {
+        return "";
     }
 
     @Override

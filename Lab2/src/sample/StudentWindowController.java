@@ -22,14 +22,13 @@ public class StudentWindowController extends WindowController {
     @FXML private void onRegister() {
         RegisterForCoursesController c =
                 (RegisterForCoursesController) nextStage("forms/RegisterForCoursesForm.fxml", "Register for Courses");
-        c.setParentStage(getStage());
-        c.init(studentId);
+        c.init(getStage(), studentId);
     }
 
     @FXML private void onViewGrades() {
         ViewGradesController c =
                 (ViewGradesController) nextStage("forms/ViewGradesForm.fxml", "View Grades");
-        c.setParentStage(getStage());
-        c.init(studentId);
+        c.init(getStage(), studentId);
     }
+
 }

@@ -7,14 +7,14 @@ import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 
-public class SelectCoursesController extends Controller {
+public class SelectCoursesController extends ModalController {
 
     private long professorId;
     private ObservableList<Course> courseList;
 
     @FXML private TableView<Course> tableView;
 
-    void init(long professorId) {
+    void init(Stage parentStage, long professorId) {
         this.professorId = professorId;
         var cols = tableView.getColumns();
         var courseCol = cols.get(0);
@@ -22,12 +22,10 @@ public class SelectCoursesController extends Controller {
         courseCol.setCellValueFactory(new PropertyValueFactory<>("description"));
         selectedCol.setCellValueFactory(new PropertyValueFactory<>("selected"));
         selectedCol.setCellFactory(tc -> new CheckBoxTableCell<>());
-        courseList = DatabaseManager.getCourses(professorId);
+        courseList = DatabaseManager.getCoursesForProfessor(professorId);
         tableView.setItems(courseList);
 
-        Stage stage = getStage();
-        stage.setResizable(false);
-        stage.showAndWait();
+        super.init(parentStage);
     }
 
 

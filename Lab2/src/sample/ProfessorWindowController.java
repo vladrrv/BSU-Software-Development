@@ -2,7 +2,6 @@ package sample;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 
 public class ProfessorWindowController extends WindowController {
 
@@ -23,14 +22,12 @@ public class ProfessorWindowController extends WindowController {
     @FXML private void onSelectCourses() {
         SelectCoursesController c =
                 (SelectCoursesController) nextStage("forms/SelectCoursesForm.fxml", "Select Courses");
-        c.setParentStage(getStage());
-        c.init(professorId);
+        c.init(getStage(), professorId);
     }
 
     @FXML private void onSubmitGrades() {
         SubmitGradesController c =
                 (SubmitGradesController) nextStage("forms/SubmitGradesForm.fxml", "Submit Grades");
-        c.setParentStage(getStage());
-        c.init(professorId);
+        c.init(getStage(), professorId);
     }
 }
